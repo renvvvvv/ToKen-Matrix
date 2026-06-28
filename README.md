@@ -15,7 +15,9 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![LLM](https://img.shields.io/badge/LLM-MiniMax--M2.7-FF6B35?logo=openai&logoColor=white)](https://api.minimaxi.com)
+[![LLM](https://img.shields.io/badge/LLM-小宿科技%20AI-4A90E2?logo=anthropic&logoColor=white)](https://xiaosu.ai)
+[![Claude](https://img.shields.io/badge/Claude-Opus--4.7-D97757?logo=anthropic&logoColor=white)](https://anthropic.com)
+[![GPT](https://img.shields.io/badge/GPT-5.5-10A37F?logo=openai&logoColor=white)](https://openai.com)
 [![Feishu](https://img.shields.io/badge/Feishu-Webhook-00D6B9?logo=lark&logoColor=white)](https://open.feishu.cn)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/renvvvvv/ToKen-Matrix?style=social)](https://github.com/renvvvvv/ToKen-Matrix)
@@ -33,34 +35,35 @@
 | 维度 | 传统运维 | ToKen Matrix |
 |---|---|---|
 | 告警响应 | 人工轮询，平均 30min+ | AI 实时感知，**秒级**触发 |
-| 处置方式 | 经验 + SOP 手册 | **80+ Hermes 原子技能** 自动匹配 |
+| 处置方式 | 经验 + SOP 手册 | **80+ Harness Engineering 原子技能** 自动匹配 |
 | 知识沉淀 | 师傅带徒弟，口口相传 | LLM 反思 → **Skill 自我迭代** v1.0→v3.1 |
-| 协同入口 | 邮件 / 电话 / 工单 | **飞书群** + 一次性确认链接 + openclaw 卡片 |
+| 协同入口 | 邮件 / 电话 / 工单 | **飞书群** + 一次性确认链接 |
 | 数据决策 | 人工看报表 | 24h 趋势巡检 + 主动降载 + 异常收敛 |
 
 ## 🎯 核心特性
 
 - 🧠 **LLM 驱动 Skill 自迭代** — 每次告警处置后，LLM 反思沉淀经验，Skill 自动出 v1.1 / v1.2 / v1.5 新版本（已沉淀 8+ 次迭代）
-- 🏗️ **五层架构 L1-L5** — 数据设备 → 适配层 → Hermes 场景引擎 → 工单层 → 总部大脑，全栈可观测
+- 🏗️ **五层架构 L1-L5** — 数据设备 → 适配层 → Harness Engineering 场景引擎 → 工单层 → 总部大脑，全栈可观测
 - 🛡️ **五大子系统全覆盖** — BMS 电池 / 动环监控 / 消防 / 安防 / BA 楼宇，每个子系统 16+ 原子技能
 - 🔄 **7 步告警处置闭环** — 检测 → 分类 → SOP 匹配 → Skill 执行 → 飞书推送 → 现场反馈 → LLM 反思
 - 📊 **24h AI 主动巡检** — 13 条分时记录、全维度趋势、异常自收敛，从"被动接告警"到"主动找问题"
-- 🌐 **多端无缝协同** — Web 控制台 (Apple 极简风) + 飞书机器人 + openclaw 卡片，移动端随时响应
+- 🌐 **多端无缝协同** — Web 控制台 (Apple 极简风) + 飞书机器人，移动端随时响应
+- 🤖 **多模型 LLM 底座** — 小宿科技 AI 同时支持 **Claude Opus 4.7** 与 **GPT-5.5**，按场景灵活调度
 
 ## 🏗️ 架构设计
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ L5  总部大脑   │  全局策略 · 跨域协同 · 自学习               │
-├──────────────────────────────────────────────────────────────┤
-│ L4  工单层     │  任务编排 · 流程引擎 · SLA 管控             │
-├──────────────────────────────────────────────────────────────┤
-│ L3  Hermes     │  场景引擎 · 80+ Skill · RAG 知识库          │
-├──────────────────────────────────────────────────────────────┤
-│ L2  适配层     │  多协议接入 · 数据清洗 · 设备抽象           │
-├──────────────────────────────────────────────────────────────┤
-│ L1  数据设备   │  BMS · 动环 · 消防 · 安防 · BA 传感器       │
-└──────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│ L5  总部大脑           │  全局策略 · 跨域协同 · 自学习         │
+├────────────────────────────────────────────────────────────────┤
+│ L4  工单层             │  任务编排 · 流程引擎 · SLA 管控       │
+├────────────────────────────────────────────────────────────────┤
+│ L3  Harness Engineering│  场景引擎 · 80+ Skill · RAG 知识库   │
+├────────────────────────────────────────────────────────────────┤
+│ L2  适配层             │  多协议接入 · 数据清洗 · 设备抽象     │
+├────────────────────────────────────────────────────────────────┤
+│ L1  数据设备           │  BMS · 动环 · 消防 · 安防 · BA 传感器 │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 > 💡 **设计哲学**：每一层都只做一件事，但做到极致。LLM 出现在 L3 + L5 两个关键节点 — L3 用于 Skill 反思迭代，L5 用于跨域决策。
@@ -111,7 +114,7 @@ python main.py
 
 ```bash
 cd ToKen-Matrix
-cp .env.example .env       # 配置 LLM Key / 飞书 Webhook
+cp .env.example .env       # 配置 LLM Key
 docker-compose up -d
 ```
 
@@ -131,19 +134,22 @@ python -m http.server 8000
 
 ## 🔑 环境变量配置
 
-复制 `.env.example` 为 `.env`，至少配置以下两项：
+复制 `.env.example` 为 `.env`，至少配置以下 LLM 项：
 
 ```bash
-# LLM（用于 Skill 反思迭代）
-LLM_API_KEY=your-llm-api-key
-LLM_BASE_URL=https://api.minimaxi.com/v1
-LLM_MODEL=MiniMax-M2.7-highspeed
+# LLM（小宿科技 AI · 用于 Skill 反思迭代）
+LLM_PROVIDER=openai-compatible
+LLM_API_KEY=your-xiaosu-ai-key
+LLM_BASE_URL=https://api.xiaosu.ai/v1
 
-# 飞书 Webhook（告警推送）
-FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-token
+# 模型选择（按场景灵活切换）
+LLM_MODEL_FAST=gpt-5.5              # 快速响应 / 简单分类
+LLM_MODEL_SMART=claude-opus-4-7     # 深度推理 / 反思迭代
+
+# FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-token
 ```
 
-> ⚠️ 真实 Webhook / API Key **绝不** 入库。前端通过 `config.local.js` 注入（已在 `.gitignore` 中排除）。
+> ⚠️ 真实 API Key **绝不** 入库。前端通过 `config.local.js` 注入（已在 `.gitignore` 中排除）。
 
 ## 🛠️ 技术栈
 
@@ -151,16 +157,17 @@ FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-token
 |---|---|
 | 前端 | HTML / CSS / JS · Apple 极简风 · 纯静态无构建 |
 | 后端 | FastAPI · Pydantic · httpx |
-| LLM | MiniMax-M2.7-highspeed（OpenAI 兼容协议） |
-| 协同 | 飞书 Webhook · 一次性确认链接 · openclaw 卡片 |
+| LLM 底座 | 小宿科技 AI · Claude Opus 4.7 · GPT-5.5 |
+| 协同 | 飞书群 · 一次性确认链接 |
 | 部署 | Docker · Docker Compose · Nginx |
 
 ## 🗺️ Roadmap
 
 - [x] ✅ 五大子系统基线能力
-- [x] ✅ 80+ Hermes 原子技能 + 多版本迭代
+- [x] ✅ 80+ Harness Engineering 原子技能 + 多版本迭代
 - [x] ✅ 7 步告警处置闭环
 - [x] ✅ 24h 主动巡检 + 异常收敛
+- [x] ✅ 多模型 LLM 底座（Claude / GPT 双栈）
 - [ ] 🚧 跨域联合决策引擎 (L5)
 - [ ] 🚧 多机房联邦学习
 - [ ] 🔮 数字孪生 3D 可视化
@@ -185,7 +192,7 @@ FEISHU_WEBHOOK_URL=https://open.feishu.cn/open-apis/bot/v2/hook/your-token
 ## 🙏 致谢
 
 - **合作方**：[世纪互联 VNET](https://www.vnet.com) — 提供数据中心基础设施与场景支持
-- **技术栈**：FastAPI · MiniMax · 飞书开放平台
+- **技术栈**：FastAPI · 小宿科技 AI · 飞书开放平台
 - **社区**：所有为 ToKen Matrix 提交 Issue / PR / Star 的朋友们 ⭐
 
 ---
