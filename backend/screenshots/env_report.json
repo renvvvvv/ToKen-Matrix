@@ -1,0 +1,298 @@
+{
+  "url": "http://localhost:8123/console.html",
+  "screenshot": "c:\\Users\\wuton\\Desktop\\0627\\token-matrix\\backend\\screenshots\\env.png",
+  "screenshot_size_bytes": 289682,
+  "menu_items_count": 8,
+  "menu_items": [
+    {
+      "page": "overview",
+      "title": "系统总览",
+      "ico": "OV"
+    },
+    {
+      "page": "agent-ops",
+      "title": "Agent 运营管理平台",
+      "ico": "A0"
+    },
+    {
+      "page": "pixelmap",
+      "title": "中央指挥中心",
+      "ico": "PX"
+    },
+    {
+      "page": "bms",
+      "title": "BMS 电池系统",
+      "ico": "BM"
+    },
+    {
+      "page": "env",
+      "title": "动环监控系统",
+      "ico": "EH"
+    },
+    {
+      "page": "fire",
+      "title": "消防系统",
+      "ico": "FR"
+    },
+    {
+      "page": "security",
+      "title": "安防系统",
+      "ico": "SC"
+    },
+    {
+      "page": "ba",
+      "title": "BA 系统",
+      "ico": "BA"
+    }
+  ],
+  "checks": {
+    "banner": {
+      "found": true,
+      "classes": "sub-banner env",
+      "ico": "EH",
+      "title": "动环监控系统",
+      "sub": "冷热通道 · UPS/PDU · 湿度压差 · PUE 实时",
+      "score": "93",
+      "lvl": "GOOD",
+      "badges": [
+        "4 区域",
+        "6 传感器",
+        "3 制冷源"
+      ]
+    },
+    "kpis": {
+      "count": 5,
+      "items": [
+        {
+          "ico": "C",
+          "name": "冷通道平均",
+          "val": "22.4℃"
+        },
+        {
+          "ico": "H",
+          "name": "热通道最高",
+          "val": "31.8℃"
+        },
+        {
+          "ico": "H",
+          "name": "环境湿度",
+          "val": "45%"
+        },
+        {
+          "ico": "P",
+          "name": "PUE",
+          "val": "1.32"
+        },
+        {
+          "ico": "W",
+          "name": "IT 负载",
+          "val": "478kW"
+        }
+      ],
+      "checklist": [
+        {
+          "name": "冷通道",
+          "present": true
+        },
+        {
+          "name": "热通道",
+          "present": true
+        },
+        {
+          "name": "湿度",
+          "present": true
+        },
+        {
+          "name": "PUE",
+          "present": true
+        },
+        {
+          "name": "IT 负载",
+          "present": true
+        }
+      ]
+    },
+    "trend": {
+      "found": true,
+      "pathCount": 8,
+      "polylineCount": 0,
+      "polygonCount": 0,
+      "circles": 4,
+      "legendItems": [
+        "冷通道 (℃)",
+        "热通道 (℃)",
+        "湿度 (%)",
+        "PUE"
+      ]
+    },
+    "stacked": {
+      "found": true,
+      "segments": 4,
+      "widths": [
+        "width:77.1%;background:#0ea5e9",
+        "width:19.3%;background:#10b981",
+        "width:2.8%;background:#f59e0b",
+        "width:0.9%;background:#94a3b8"
+      ],
+      "legend": [
+        "IT 设备 11472",
+        "制冷 2868",
+        "照明 412",
+        "其他 128"
+      ]
+    },
+    "rings": {
+      "count": 0,
+      "items": [],
+      "svgCount": 8
+    },
+    "events": {
+      "count": 4,
+      "items": [
+        {
+          "time": "11:12",
+          "body": "RACK-F3-R12机柜进风温度 32.6℃ · Skill env/rack-temp 自动调节",
+          "lvl": "P0"
+        },
+        {
+          "time": "14:21",
+          "body": "UPS-BUPS 负载率 87% · 已切分至 UPS-A,负载→58%",
+          "lvl": "P1"
+        },
+        {
+          "time": "20:12",
+          "body": "CRAC-5#回风湿度 58% 偏高 · dehumidify 已收敛至 47%",
+          "lvl": "P1"
+        },
+        {
+          "time": "03:42",
+          "body": "CRAC-2#出风温度 18.2℃ 偏离基线 · 已回正至 20.5℃",
+          "lvl": "P1"
+        }
+      ]
+    },
+    "table": {
+      "found": true,
+      "header": [
+        "#",
+        "时间",
+        "区域",
+        "冷通道 ℃",
+        "热通道 ℃",
+        "湿度 %",
+        "PUE",
+        "状态"
+      ],
+      "rowCount": 20,
+      "firstRow": [
+        "1",
+        "14:00",
+        "F1 大厅",
+        "22.0",
+        "30.0",
+        "45.0",
+        "1.32",
+        "OK"
+      ],
+      "lastRow": [
+        "20",
+        "15:35",
+        "F4 计算",
+        "22.0",
+        "30.1",
+        "45.2",
+        "1.32",
+        "OK"
+      ],
+      "areaDistribution": {}
+    }
+  },
+  "console_summary": {
+    "total": 17,
+    "error": 17,
+    "warning": 0,
+    "info": 0,
+    "log": 0
+  },
+  "polygon_svg_errors": [
+    {
+      "type": "error",
+      "text": "Error: <polygon> attribute points: Expected number, \"M0.0,26.0 L1.5,2…\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 2490, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <polygon> attribute points: Expected number, \"M0.0,26.1 L1.5,2…\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 2490, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <polygon> attribute points: Expected number, \"M0.0,25.7 L1.5,2…\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 2490, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <polygon> attribute points: Expected number, \"M0.0,32.0 L1.5,3…\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 2490, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <polygon> attribute points: Expected number, \"M0.0,26.0 L1.5,2…\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 2490, 'columnNumber': 0}"
+    }
+  ],
+  "non_polygon_errors": [
+    {
+      "type": "error",
+      "text": "Error: <path> attribute d: Expected moveto path command ('M' or 'm'), \" L911.0,158.0 Z\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <circle> attribute cy: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <text> attribute y: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <path> attribute d: Expected moveto path command ('M' or 'm'), \" L911.0,158.0 Z\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <circle> attribute cy: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <text> attribute y: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <path> attribute d: Expected moveto path command ('M' or 'm'), \" L911.0,158.0 Z\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <circle> attribute cy: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <text> attribute y: Expected length, \"NaN\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    },
+    {
+      "type": "error",
+      "text": "Error: <path> attribute d: Expected moveto path command ('M' or 'm'), \" L911.0,158.0 Z\".",
+      "location": "{'url': 'http://localhost:8123/console.html', 'lineNumber': 1359, 'columnNumber': 0}"
+    }
+  ],
+  "page_errors": [],
+  "failed_requests": []
+}

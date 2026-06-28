@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # 前端服务 - Nginx
+  frontend:
+    container_name: token-matrix-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - token-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "app=token-matrix"
+      - "component=frontend"
+
+  # 后端服务 - FastAPI + Uvicorn
+  backend:
+    container_name: token-matrix-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - token-network
+    restart: unless-stopped
+    environment:
+      - DEBUG=false
+      - HOST=0.0.0.0
+      - PORT=8000
+      - ENV=development
+      # 可选的外部服务配置
+      - ZHIPU_API_KEY=${ZHIPU_API_KEY:-}
+      - FEISHU_APP_ID=${FEISHU_APP_ID:-}
+      - FEISHU_APP_SECRET=${FEISHU_APP_SECRET:-}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://user:pass@localhost/tokenmatrix}
+    volumes:
+      - ./hermes/scenarios:/app/hermes/scenarios:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "app=token-matrix"
+      - "component=backend"
+
+networks:
+  token-network:
+    driver: bridge
+    name: token-network

@@ -1,0 +1,971 @@
+{
+  "nodes": [
+    {
+      "id": "cctv",
+      "type": "system",
+      "label": "CCTV 系统",
+      "color": "#7c3aed"
+    },
+    {
+      "id": "cctv.poe-diag",
+      "type": "skill",
+      "label": "PoE 端口诊断",
+      "system": "cctv",
+      "version": "v1.2"
+    },
+    {
+      "id": "cctv.link-check",
+      "type": "skill",
+      "label": "摄像头链路巡检",
+      "system": "cctv",
+      "version": "v1.4"
+    },
+    {
+      "id": "cctv.ticket",
+      "type": "skill",
+      "label": "离线告警自动派单",
+      "system": "cctv",
+      "version": "v3.1"
+    },
+    {
+      "id": "cctv.nvr-storage",
+      "type": "skill",
+      "label": "NVR 存储容量",
+      "system": "cctv",
+      "version": "v1.2"
+    },
+    {
+      "id": "cctv.stream-bitrate",
+      "type": "skill",
+      "label": "码率自适应",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.face-recog",
+      "type": "skill",
+      "label": "人脸识别",
+      "system": "cctv",
+      "version": "v2.0"
+    },
+    {
+      "id": "cctv.plate-recog",
+      "type": "skill",
+      "label": "车牌识别",
+      "system": "cctv",
+      "version": "v1.5"
+    },
+    {
+      "id": "cctv.intruder",
+      "type": "skill",
+      "label": "入侵检测",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.lost-frame",
+      "type": "skill",
+      "label": "丢帧检测",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.night-vision",
+      "type": "skill",
+      "label": "夜视模式切换",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.ptz-control",
+      "type": "skill",
+      "label": "云台控制",
+      "system": "cctv",
+      "version": "v1.3"
+    },
+    {
+      "id": "cctv.video-wall",
+      "type": "skill",
+      "label": "视频墙拼接",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.retention-clean",
+      "type": "skill",
+      "label": "录像周期清理",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.motion-track",
+      "type": "skill",
+      "label": "移动追踪",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.audio-detect",
+      "type": "skill",
+      "label": "音频异响检测",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.bandwidth-mgr",
+      "type": "skill",
+      "label": "带宽管理",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "cctv.recording-plan",
+      "type": "skill",
+      "label": "录像计划",
+      "system": "cctv",
+      "version": "v1.0"
+    },
+    {
+      "id": "env",
+      "type": "system",
+      "label": "动环监控系统",
+      "color": "#10b981"
+    },
+    {
+      "id": "env.crac-cool",
+      "type": "skill",
+      "label": "CRAC 出风调节",
+      "system": "env",
+      "version": "v2.4"
+    },
+    {
+      "id": "env.hot-aisle",
+      "type": "skill",
+      "label": "热通道封闭",
+      "system": "env",
+      "version": "v1.7"
+    },
+    {
+      "id": "env.predict",
+      "type": "skill",
+      "label": "能耗趋势预测",
+      "system": "env",
+      "version": "v3.1"
+    },
+    {
+      "id": "env.ups-bypass",
+      "type": "skill",
+      "label": "UPS 旁路切换",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.pdu-load",
+      "type": "skill",
+      "label": "PDU 负载均衡",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.leak-detect",
+      "type": "skill",
+      "label": "漏水检测",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.humidity",
+      "type": "skill",
+      "label": "湿度调节",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.pressure-differ",
+      "type": "skill",
+      "label": "压差监测",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.battery-test",
+      "type": "skill",
+      "label": "电池放电测试",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.genset-start",
+      "type": "skill",
+      "label": "柴发启动",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.power-quality",
+      "type": "skill",
+      "label": "电能质量",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.rack-temp",
+      "type": "skill",
+      "label": "机柜温度",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.airflow",
+      "type": "skill",
+      "label": "气流组织",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.env-trend",
+      "type": "skill",
+      "label": "环境趋势",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.dehumidify",
+      "type": "skill",
+      "label": "除湿联动",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.cold-aisle",
+      "type": "skill",
+      "label": "冷通道封闭",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "env.pue-realtime",
+      "type": "skill",
+      "label": "实时 PUE",
+      "system": "env",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire",
+      "type": "system",
+      "label": "消防系统",
+      "color": "#ef4444"
+    },
+    {
+      "id": "fire.pump-switch",
+      "type": "skill",
+      "label": "消防泵启停",
+      "system": "fire",
+      "version": "v1.2"
+    },
+    {
+      "id": "fire.water",
+      "type": "skill",
+      "label": "喷淋水压",
+      "system": "fire",
+      "version": "v1.5"
+    },
+    {
+      "id": "fire.feishu",
+      "type": "skill",
+      "label": "火警飞书推送",
+      "system": "fire",
+      "version": "v2.0"
+    },
+    {
+      "id": "fire.gas-flood",
+      "type": "skill",
+      "label": "气体灭火",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.smoke-typo",
+      "type": "skill",
+      "label": "烟感误报识别",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.sprinkler-zone",
+      "type": "skill",
+      "label": "喷淋分区",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.hydrant-pressure",
+      "type": "skill",
+      "label": "消火栓压力",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.emergency-light",
+      "type": "skill",
+      "label": "应急照明",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.evac-route",
+      "type": "skill",
+      "label": "疏散通道",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.detector-clean",
+      "type": "skill",
+      "label": "探测器清洁",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.alarm-reset",
+      "type": "skill",
+      "label": "报警复位",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.valve-status",
+      "type": "skill",
+      "label": "阀门状态",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.foam-system",
+      "type": "skill",
+      "label": "泡沫系统",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.vent-control",
+      "type": "skill",
+      "label": "防排烟",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.fire-door",
+      "type": "skill",
+      "label": "防火门",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.linkage",
+      "type": "skill",
+      "label": "消防联动",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "fire.manual-call",
+      "type": "skill",
+      "label": "手报按钮",
+      "system": "fire",
+      "version": "v1.0"
+    },
+    {
+      "id": "security",
+      "type": "system",
+      "label": "安防系统",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "security.access-control",
+      "type": "skill",
+      "label": "门禁控制",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.visitor-mgmt",
+      "type": "skill",
+      "label": "访客管理",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.face-access",
+      "type": "skill",
+      "label": "人脸门禁",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.card-issue",
+      "type": "skill",
+      "label": "卡片发放",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.patrol-route",
+      "type": "skill",
+      "label": "巡更路线",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.intrusion-zone",
+      "type": "skill",
+      "label": "防区布防",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.video-linkage",
+      "type": "skill",
+      "label": "视频联动",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.guard-tour",
+      "type": "skill",
+      "label": "保安巡更",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.badge-print",
+      "type": "skill",
+      "label": "访客证打印",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.anti-passback",
+      "type": "skill",
+      "label": "防反传",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.duress-alarm",
+      "type": "skill",
+      "label": "胁迫报警",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.intercom",
+      "type": "skill",
+      "label": "对讲系统",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.locker-mgmt",
+      "type": "skill",
+      "label": "储物柜管理",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.parking",
+      "type": "skill",
+      "label": "停车场",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.gate-barrier",
+      "type": "skill",
+      "label": "道闸",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.two-factor",
+      "type": "skill",
+      "label": "双因子认证",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "security.tail-detect",
+      "type": "skill",
+      "label": "尾随检测",
+      "system": "security",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba",
+      "type": "system",
+      "label": "BA 系统",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "ba.vav-control",
+      "type": "skill",
+      "label": "变风量末端",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.ahu-start",
+      "type": "skill",
+      "label": "组合式空调",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.chiller-opt",
+      "type": "skill",
+      "label": "冷机优化",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.cooling-tower",
+      "type": "skill",
+      "label": "冷却塔",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.hot-water",
+      "type": "skill",
+      "label": "热水循环",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.lighting-scene",
+      "type": "skill",
+      "label": "照明场景",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.blinds-control",
+      "type": "skill",
+      "label": "电动遮阳",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.elevator-monitor",
+      "type": "skill",
+      "label": "电梯监控",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.water-leak",
+      "type": "skill",
+      "label": "管网漏水",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.meter-pulse",
+      "type": "skill",
+      "label": "电表脉冲",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.co2-sensor",
+      "type": "skill",
+      "label": "CO2 监测",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.occupancy",
+      "type": "skill",
+      "label": "人员占位",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.schedule",
+      "type": "skill",
+      "label": "时间表",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.energy-budget",
+      "type": "skill",
+      "label": "能耗预算",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.fault-diagnose",
+      "type": "skill",
+      "label": "故障诊断",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.setpoint-clip",
+      "type": "skill",
+      "label": "设定值剪裁",
+      "system": "ba",
+      "version": "v1.0"
+    },
+    {
+      "id": "ba.free-cooling",
+      "type": "skill",
+      "label": "自然冷源",
+      "system": "ba",
+      "version": "v1.0"
+    }
+  ],
+  "edges": [
+    {
+      "from": "cctv",
+      "to": "cctv.poe-diag"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.link-check"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.ticket"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.nvr-storage"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.stream-bitrate"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.face-recog"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.plate-recog"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.intruder"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.lost-frame"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.night-vision"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.ptz-control"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.video-wall"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.retention-clean"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.motion-track"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.audio-detect"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.bandwidth-mgr"
+    },
+    {
+      "from": "cctv",
+      "to": "cctv.recording-plan"
+    },
+    {
+      "from": "env",
+      "to": "env.crac-cool"
+    },
+    {
+      "from": "env",
+      "to": "env.hot-aisle"
+    },
+    {
+      "from": "env",
+      "to": "env.predict"
+    },
+    {
+      "from": "env",
+      "to": "env.ups-bypass"
+    },
+    {
+      "from": "env",
+      "to": "env.pdu-load"
+    },
+    {
+      "from": "env",
+      "to": "env.leak-detect"
+    },
+    {
+      "from": "env",
+      "to": "env.humidity"
+    },
+    {
+      "from": "env",
+      "to": "env.pressure-differ"
+    },
+    {
+      "from": "env",
+      "to": "env.battery-test"
+    },
+    {
+      "from": "env",
+      "to": "env.genset-start"
+    },
+    {
+      "from": "env",
+      "to": "env.power-quality"
+    },
+    {
+      "from": "env",
+      "to": "env.rack-temp"
+    },
+    {
+      "from": "env",
+      "to": "env.airflow"
+    },
+    {
+      "from": "env",
+      "to": "env.env-trend"
+    },
+    {
+      "from": "env",
+      "to": "env.dehumidify"
+    },
+    {
+      "from": "env",
+      "to": "env.cold-aisle"
+    },
+    {
+      "from": "env",
+      "to": "env.pue-realtime"
+    },
+    {
+      "from": "fire",
+      "to": "fire.pump-switch"
+    },
+    {
+      "from": "fire",
+      "to": "fire.water"
+    },
+    {
+      "from": "fire",
+      "to": "fire.feishu"
+    },
+    {
+      "from": "fire",
+      "to": "fire.gas-flood"
+    },
+    {
+      "from": "fire",
+      "to": "fire.smoke-typo"
+    },
+    {
+      "from": "fire",
+      "to": "fire.sprinkler-zone"
+    },
+    {
+      "from": "fire",
+      "to": "fire.hydrant-pressure"
+    },
+    {
+      "from": "fire",
+      "to": "fire.emergency-light"
+    },
+    {
+      "from": "fire",
+      "to": "fire.evac-route"
+    },
+    {
+      "from": "fire",
+      "to": "fire.detector-clean"
+    },
+    {
+      "from": "fire",
+      "to": "fire.alarm-reset"
+    },
+    {
+      "from": "fire",
+      "to": "fire.valve-status"
+    },
+    {
+      "from": "fire",
+      "to": "fire.foam-system"
+    },
+    {
+      "from": "fire",
+      "to": "fire.vent-control"
+    },
+    {
+      "from": "fire",
+      "to": "fire.fire-door"
+    },
+    {
+      "from": "fire",
+      "to": "fire.linkage"
+    },
+    {
+      "from": "fire",
+      "to": "fire.manual-call"
+    },
+    {
+      "from": "security",
+      "to": "security.access-control"
+    },
+    {
+      "from": "security",
+      "to": "security.visitor-mgmt"
+    },
+    {
+      "from": "security",
+      "to": "security.face-access"
+    },
+    {
+      "from": "security",
+      "to": "security.card-issue"
+    },
+    {
+      "from": "security",
+      "to": "security.patrol-route"
+    },
+    {
+      "from": "security",
+      "to": "security.intrusion-zone"
+    },
+    {
+      "from": "security",
+      "to": "security.video-linkage"
+    },
+    {
+      "from": "security",
+      "to": "security.guard-tour"
+    },
+    {
+      "from": "security",
+      "to": "security.badge-print"
+    },
+    {
+      "from": "security",
+      "to": "security.anti-passback"
+    },
+    {
+      "from": "security",
+      "to": "security.duress-alarm"
+    },
+    {
+      "from": "security",
+      "to": "security.intercom"
+    },
+    {
+      "from": "security",
+      "to": "security.locker-mgmt"
+    },
+    {
+      "from": "security",
+      "to": "security.parking"
+    },
+    {
+      "from": "security",
+      "to": "security.gate-barrier"
+    },
+    {
+      "from": "security",
+      "to": "security.two-factor"
+    },
+    {
+      "from": "security",
+      "to": "security.tail-detect"
+    },
+    {
+      "from": "ba",
+      "to": "ba.vav-control"
+    },
+    {
+      "from": "ba",
+      "to": "ba.ahu-start"
+    },
+    {
+      "from": "ba",
+      "to": "ba.chiller-opt"
+    },
+    {
+      "from": "ba",
+      "to": "ba.cooling-tower"
+    },
+    {
+      "from": "ba",
+      "to": "ba.hot-water"
+    },
+    {
+      "from": "ba",
+      "to": "ba.lighting-scene"
+    },
+    {
+      "from": "ba",
+      "to": "ba.blinds-control"
+    },
+    {
+      "from": "ba",
+      "to": "ba.elevator-monitor"
+    },
+    {
+      "from": "ba",
+      "to": "ba.water-leak"
+    },
+    {
+      "from": "ba",
+      "to": "ba.meter-pulse"
+    },
+    {
+      "from": "ba",
+      "to": "ba.co2-sensor"
+    },
+    {
+      "from": "ba",
+      "to": "ba.occupancy"
+    },
+    {
+      "from": "ba",
+      "to": "ba.schedule"
+    },
+    {
+      "from": "ba",
+      "to": "ba.energy-budget"
+    },
+    {
+      "from": "ba",
+      "to": "ba.fault-diagnose"
+    },
+    {
+      "from": "ba",
+      "to": "ba.setpoint-clip"
+    },
+    {
+      "from": "ba",
+      "to": "ba.free-cooling"
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>ToKen Matrix · 现场确认</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue",Arial,sans-serif;background:linear-gradient(135deg,#0ea5e9 0%,#06b6d4 100%);min-height:100vh;padding:18px;display:flex;align-items:flex-start;justify-content:center}
+  .card{width:100%;max-width:480px;background:#fff;border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,.18);overflow:hidden;animation:pop .35s ease}
+  @keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+  .head{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;padding:18px 20px;position:relative}
+  .head .badge{display:inline-block;background:rgba(255,255,255,.22);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:900;letter-spacing:.06em;margin-bottom:6px}
+  .head h1{font-size:18px;font-weight:900;margin-bottom:3px}
+  .head small{font-size:11px;opacity:.92;display:block}
+  .head .valid{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.2);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:800}
+  .head .valid.warn{background:rgba(239,68,68,.3)}
+  .body{padding:18px 20px}
+  .alert{background:linear-gradient(135deg,#fff5f5,#fee2e2);border:1px solid #fca5a5;border-radius:11px;padding:11px 13px;margin-bottom:14px}
+  .alert .row{display:flex;justify-content:space-between;font-size:11px;color:#7f1d1d;margin-bottom:4px}
+  .alert .row b{color:#b91c1c;font-weight:900}
+  .alert .dev{font-size:13px;color:#b91c1c;font-weight:900;margin-top:4px;display:flex;align-items:center;gap:5px}
+  .alert .dev i{width:6px;height:6px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.18);animation:alarm 1.2s infinite}
+  @keyframes alarm{0%,100%{box-shadow:0 0 0 4px rgba(239,68,68,.18)}50%{box-shadow:0 0 0 8px rgba(239,68,68,.32)}}
+  .step{margin-bottom:14px}
+  .step h4{font-size:11px;color:#64748b;font-weight:900;letter-spacing:.06em;margin-bottom:6px}
+  .step .desc{font-size:12.5px;line-height:1.6;color:#334155;background:#f8fbff;border:1px solid #e0f2fe;border-radius:10px;padding:10px 12px}
+  .step .desc code{background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;font-size:11.5px;font-weight:800}
+  .upload{border:2px dashed #cbd5e1;border-radius:11px;padding:18px 14px;text-align:center;cursor:pointer;background:#f8fbff;transition:.2s;margin-bottom:12px}
+  .upload:hover{border-color:#0ea5e9;color:#0369a1;background:#e0f2fe}
+  .upload.has{border-style:solid;border-color:#10b981;color:#047857;background:#dcfce7}
+  .upload i{display:block;font-size:32px;margin-bottom:4px;font-style:normal}
+  .upload span{font-size:12px;font-weight:700}
+  .upload small{display:block;font-size:10px;color:#94a3b8;margin-top:3px;font-weight:500}
+  .upload input{display:none}
+  .pic-list{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+  .pic-list:empty{display:none}
+  .pic-list .p{aspect-ratio:1;border-radius:8px;background:#f0f9ff;overflow:hidden;position:relative;border:1px solid #e0f2fe}
+  .pic-list .p img{width:100%;height:100%;object-fit:cover}
+  .pic-list .p .x{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;border:0;font-size:11px;cursor:pointer;display:grid;place-items:center}
+  textarea{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;font-size:13px;resize:none;height:80px;font-family:inherit;outline:none;margin-bottom:14px;background:#f8fbff}
+  textarea:focus{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.12);background:#fff}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{border:0;border-radius:12px;padding:14px;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.18s;letter-spacing:.02em}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+  .btn.no{background:linear-gradient(135deg,#fee2e2,#fecaca);color:#b91c1c;box-shadow:0 4px 12px rgba(239,68,68,.18)}
+  .btn.no:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px rgba(239,68,68,.28)}
+  .btn.yes{background:linear-gradient(135deg,#10b981,#34d399);color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+  .btn.yes:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 18px rgba(16,185,129,.4)}
+  .foot{padding:14px 20px;border-top:1px solid #e2e8f0;background:#f8fbff;font-size:10.5px;color:#94a3b8;display:flex;justify-content:space-between;align-items:center}
+  .foot b{color:#475569}
+  .result{position:fixed;inset:0;background:rgba(15,23,42,.7);backdrop-filter:blur(8px);z-index:99;display:none;align-items:center;justify-content:center}
+  .result.open{display:flex;animation:fade .25s ease}
+  @keyframes fade{0%{opacity:0}100%{opacity:1}}
+  .result .r{background:#fff;border-radius:18px;padding:36px 32px;text-align:center;max-width:380px;animation:pop .35s ease}
+  .result .r i{font-style:normal;font-size:56px;display:block;margin-bottom:10px}
+  .result .r.ok i{color:#10b981}
+  .result .r.no i{color:#ef4444}
+  .result .r h3{font-size:18px;color:#0f172a;margin-bottom:6px;font-weight:900}
+  .result .r p{font-size:13px;color:#64748b;line-height:1.6;margin-bottom:18px}
+  .result .r .cls{background:linear-gradient(135deg,#0ea5e9,#06b6d4);color:#fff;border:0;border-radius:10px;padding:10px 24px;font-size:13px;font-weight:900;cursor:pointer}
+  .expired{padding:50px 24px;text-align:center}
+  .expired i{font-style:normal;font-size:60px;display:block;margin-bottom:14px;color:#cbd5e1}
+  .expired h2{font-size:18px;color:#334155;margin-bottom:8px}
+  .expired p{font-size:13px;color:#94a3b8;line-height:1.6}
+  .timer{color:#ef4444;font-weight:900;font-size:11px;display:inline-block;background:rgba(239,68,68,.1);padding:1px 6px;border-radius:4px;margin-left:6px}
+  .meta-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .meta-row .m{background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;border-radius:7px;padding:4px 8px;font-size:10.5px;font-weight:800}
+  .meta-row .m b{color:#0c4a6e}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="head">
+    <div class="badge">TOKEN MATRIX · 一次链接</div>
+    <h1>📸 现场拍照确认</h1>
+    <small>ToKen Matrix Agent · 自动告警收敛链路</small>
+    <div class="valid" id="validTag">30:00 有效</div>
+  </div>
+  <div class="body" id="body">
+    <div class="meta-row" id="metaRow"></div>
+    <div class="alert">
+      <div class="row"><span>告警级别</span><b id="aLevel">P0</b></div>
+      <div class="row"><span>触发时间</span><b id="aTime">--</b></div>
+      <div class="row"><span>主修复 Skill</span><b id="aSkill">--</b></div>
+      <div class="dev"><i></i><span id="aDev">--</span></div>
+    </div>
+    <div class="step">
+      <h4>处置结果</h4>
+      <div class="desc" id="aDesc">--</div>
+    </div>
+    <h4 style="font-size:11px;color:#64748b;font-weight:900;letter-spacing:.06em;margin-bottom:6px">上传现场照片 (可多张)</h4>
+    <div class="upload" id="upload">
+      <i>📷</i>
+      <span id="uploadTxt">点击或拖拽照片到这里</span>
+      <small>支持 JPG/PNG · 最多 3 张</small>
+      <input type="file" id="file" accept="image/*" multiple />
+    </div>
+    <div class="pic-list" id="picList"></div>
+    <h4 style="font-size:11px;color:#64748b;font-weight:900;letter-spacing:.06em;margin-bottom:6px">补充说明 (选填)</h4>
+    <textarea id="fb" placeholder="例如:已到达现场,温度恢复到 24.5℃,CRAC 2# 运行正常,温感探头无异常..."></textarea>
+    <div class="opts">
+      <button class="btn no" id="btnNo">⚠ 需调整 / 反馈</button>
+      <button class="btn yes" id="btnYes">✓ 已确认修复</button>
+    </div>
+  </div>
+  <div class="foot">
+    <span>受邀人: <b>任承智</b> · 现场运维</span>
+    <span id="tokenShort">token:--</span>
+  </div>
+</div>
+
+<div class="result" id="resultMask">
+  <div class="r" id="resultBox">
+    <i id="rIco">✓</i>
+    <h3 id="rTitle">已提交</h3>
+    <p id="rDesc">您的反馈已实时同步到 Agent 控制台,可关闭此页面。</p>
+    <button class="cls" id="rClose">关闭页面</button>
+  </div>
+</div>
+
+<script>
+const params=new URLSearchParams(location.search);
+const token=params.get('token')||'';
+const LS_KEY='tkm_confirm_'+token;
+let pics=[];
+let used=false;
+
+function $$(s){return document.querySelector(s);}
+function fmt(t){const m=String(Math.floor(t/60)).padStart(2,'0');const s=String(t%60).padStart(2,'0');return m+':'+s;}
+
+// 读取数据:优先 query 参数 d(短小可靠,无 base64 截断问题),回退 hash,再回退 localStorage
+let payload=null;
+function tryParse(json){
+  if(!json)return null;
+  try{return JSON.parse(json);}catch(e){return null;}
+}
+try{
+  // 1) query 参数 d=
+  const d=params.get('d');
+  if(d)payload=tryParse(decodeURIComponent(d));
+  // 2) URL hash d=
+  if(!payload){
+    const hash=location.hash||'';
+    const m=hash.match(/(?:^|[#&])d=([^&]+)/);
+    if(m)payload=tryParse(decodeURIComponent(m[1]));
+  }
+  // 3) localStorage 同源场景
+  if(!payload){
+    const data=localStorage.getItem('tkm_c_'+token);
+    if(data)payload=tryParse(data);
+  }
+}catch(e){console.warn('parse ctx err',e);}
+
+if(!token||!payload){
+  $$('#body').innerHTML='<div class="expired"><i>🔒</i><h2>链接无效或已过期</h2><p>请回到 Agent 控制台重新触发演示,以生成新的一次链接。</p></div>';
+}else{
+  $$('#aLevel').textContent=payload.level||'P1';
+  $$('#aTime').textContent=payload.time||'--';
+  $$('#aSkill').textContent=payload.skill||'--';
+  $$('#aDev').textContent=payload.dev||'--';
+  $$('#aDesc').innerHTML=payload.desc||'--';
+  $$('#tokenShort').textContent='token:'+token.slice(-10);
+  const meta=(payload.meta||[]).map(m=>`<div class="m">${m.k}: <b>${m.v}</b></div>`).join('');
+  $$('#metaRow').innerHTML=meta;
+  // 有效期
+  const expireAt=(payload.ts||0)+30*60*1000;
+  const tick=()=>{
+    const left=Math.max(0,Math.floor((expireAt-Date.now())/1000));
+    const tag=$$('#validTag');
+    if(left<=0){tag.textContent='已过期';tag.classList.add('warn');clearInterval(timer);}
+    else{tag.textContent=fmt(left)+' 有效';if(left<60)tag.classList.add('warn');}
+  };
+  tick();const timer=setInterval(tick,1000);
+}
+
+// 上传
+$$('#upload').addEventListener('click',()=>$$('#file').click());
+$$('#file').addEventListener('change',e=>{
+  const files=Array.from(e.target.files||[]);
+  files.forEach(f=>{
+    if(pics.length>=3)return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      pics.push({name:f.name,data:ev.target.result,size:f.size});
+      renderPics();
+    };
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+});
+function renderPics(){
+  $$('#picList').innerHTML=pics.map((p,i)=>`<div class="p"><img src="${p.data}"/><button class="x" data-i="${i}">×</button></div>`).join('');
+  $$('#upload').classList.toggle('has',pics.length>0);
+  $$('#uploadTxt').textContent=pics.length>0?`已上传 ${pics.length} 张` :'点击或拖拽照片到这里';
+}
+$$('#picList').addEventListener('click',e=>{
+  if(e.target.classList.contains('x')){
+    pics.splice(parseInt(e.target.dataset.i),1);renderPics();
+  }
+});
+// 拖拽
+$$('#upload').addEventListener('dragover',e=>{e.preventDefault();$$('#upload').style.borderColor='#0ea5e9';});
+$$('#upload').addEventListener('dragleave',()=>{$$('#upload').style.borderColor='';});
+$$('#upload').addEventListener('drop',e=>{
+  e.preventDefault();
+  const files=Array.from(e.dataTransfer.files||[]).filter(f=>f.type.startsWith('image/'));
+  files.forEach(f=>{
+    if(pics.length>=3)return;
+    const r=new FileReader();r.onload=ev=>{pics.push({name:f.name,data:ev.target.result});renderPics();};r.readAsDataURL(f);
+  });
+});
+
+function submit(ok){
+  if(used)return;
+  used=true;
+  const fb=$$('#fb').value.trim();
+  const result={ok,fb,pics:pics.length,picNames:pics.map(p=>p.name),ts:Date.now()};
+  localStorage.setItem(LS_KEY+'_result',JSON.stringify(result));
+  // 通知 console 页面
+  try{
+    if(window.opener&&!window.opener.closed){window.opener.postMessage({type:'tkm_confirm',token,result},'*');}
+  }catch(e){}
+  // 触发 storage 事件(其他 tab 可监听)
+  localStorage.setItem('tkm_confirm_event',JSON.stringify({token,ts:Date.now()}));
+  // 显示结果
+  $$('#rIco').textContent=ok?'✓':'⚠';
+  $$('#rIco').parentElement.className='r '+(ok?'ok':'no');
+  $$('#rTitle').textContent=ok?'反馈已提交':'已通知 Agent';
+  $$('#rDesc').textContent=ok?'确认修复完成 · Agent 已收到反馈,Skill 正在迭代。':'反馈已送达 · Agent 将基于反馈优化 Skill 规则,生成新的处理报告。';
+  $$('#resultMask').classList.add('open');
+  // 锁定按钮
+  $$('#btnYes').disabled=true;$$('#btnNo').disabled=true;
+}
+$$('#btnYes').addEventListener('click',()=>submit(true));
+$$('#btnNo').addEventListener('click',()=>submit(false));
+$$('#rClose').addEventListener('click',()=>{try{window.close();}catch(e){}setTimeout(()=>{$$('#rTitle').textContent='可关闭此页面';},100);});
+</script>
+</body>
+</html>

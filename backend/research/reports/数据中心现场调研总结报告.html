@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据中心现场调研总结报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .timeline-line { position: relative; }
+        .timeline-line::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #3b82f6, #10b981); }
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .section-divider { height: 4px; background: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); border-radius: 2px; }
+        .metric-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .status-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .status-high { background: #fef2f2; color: #dc2626; }
+        .status-medium { background: #fffbeb; color: #d97706; }
+        .status-low { background: #f0fdf4; color: #16a34a; }
+        .status-info { background: #eff6ff; color: #2563eb; }
+        .toc-link { transition: all 0.2s; }
+        .toc-link:hover { padding-left: 8px; color: #3b82f6; }
+        .chart-container { min-height: 300px; }
+        .print-break { page-break-before: always; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- 封面 -->
+    <div class="gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-amber-400 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+        <div class="relative z-10 text-center text-white px-8 max-w-4xl">
+            <div class="mb-6">
+                <span class="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium tracking-wider border border-white/20">
+                    <i class="fas fa-clipboard-check mr-2"></i>现场调研报告
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight">
+                数据中心现场调研<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-emerald-300 to-amber-300">总结报告</span>
+            </h1>
+            <p class="text-xl text-blue-100 mb-10 font-light">数据中心能耗数据核算与问题管理系统 · 机房巡检与AI应用</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-blue-300 text-sm mb-1"><i class="fas fa-calendar-alt mr-2"></i>调研日期</div>
+                    <div class="text-2xl font-bold">2026年6月2日</div>
+                    <div class="text-blue-200 text-sm">09:47 - 16:53</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-emerald-300 text-sm mb-1"><i class="fas fa-map-marker-alt mr-2"></i>调研地点</div>
+                    <div class="text-2xl font-bold">T3+级数据中心</div>
+                    <div class="text-emerald-200 text-sm">快手站点园区</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-amber-300 text-sm mb-1"><i class="fas fa-users mr-2"></i>参与人员</div>
+                    <div class="text-2xl font-bold">约4人/场</div>
+                    <div class="text-amber-200 text-sm">运维 + 技术顾问</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 text-sm">
+                <span class="px-3 py-1 bg-white/10 rounded-full border border-white/20">能耗核算</span>
+                <span class="px-3 py-1 bg-white/10 rounded-full border border-white/20">问题管理</span>
+                <span class="px-3 py-1 bg-white/10 rounded-full border border-white/20">机房巡检</span>
+                <span class="px-3 py-1 bg-white/10 rounded-full border border-white/20">AI应用</span>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm animate-bounce">
+            <i class="fas fa-chevron-down"></i> 向下滚动阅读
+        </div>
+    </div>
+
+    <!-- 目录 -->
+    <div class="bg-white border-b sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="font-bold text-slate-700"><i class="fas fa-list-ul mr-2 text-blue-600"></i>报告目录</div>
+                <div class="hidden md:flex gap-6 text-sm">
+                    <a href="#executive-summary" class="toc-link text-slate-600 hover:text-blue-600">执行摘要</a>
+                    <a href="#background" class="toc-link text-slate-600 hover:text-blue-600">调研背景</a>
+                    <a href="#topic1" class="toc-link text-slate-600 hover:text-blue-600">课题一：巡检与AI</a>
+                    <a href="#topic2" class="toc-link text-slate-600 hover:text-blue-600">课题二：能耗与问题管理</a>
+                    <a href="#conclusion" class="toc-link text-slate-600 hover:text-blue-600">结论与建议</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- 执行摘要 -->
+        <section id="executive-summary" class="bg-white rounded-2xl shadow-lg p-8 md:p-10 border-l-4 border-blue-600">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                    <i class="fas fa-file-alt text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">执行摘要</h2>
+            </div>
+            
+            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-blue-600">2</div>
+                        <div class="text-sm text-slate-500">调研课题</div>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-emerald-600">2h 44min</div>
+                        <div class="text-sm text-slate-500">总调研时长</div>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-amber-600">8+</div>
+                        <div class="text-sm text-slate-500">关键问题发现</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prose max-w-none text-slate-600 leading-relaxed space-y-4">
+                <p><strong class="text-slate-800">【问题定义】</strong>本次现场调研围绕数据中心两大核心痛点展开：一是现有能耗数据核算流程依赖手工操作，统计误差达5000+度电/月，且智航平台自动计算功能未生效；二是问题管理数据分散在多个多维表格中，缺乏统一平台，内审压力大且重复登记增加一线负担。</p>
+                
+                <p><strong class="text-slate-800">【核心结论】</strong>（1）能耗核算方面，手动Excel统计存在120个采集点的人工核对痛点，智航平台虽已配置点位但工作流未生效导致总耗电量显示为0，自动采集替代手工填报的改造条件已基本成熟；（2）问题管理方面，现有飞书多维表格已实现风险分级、双审核人、设备信息自动关联等基础功能，但面临"工程交付类问题"与"运维问题"拆分管理、表格过大卡顿、仅登记未解决问题导致数据失真等挑战；（3）AI应用方面，园区对AI落地持谨慎态度，优先聚焦数据基建，内网部署Minimax和脚本化改造是兼顾安全与效率的可行路径。</p>
+                
+                <p><strong class="text-slate-800">【推荐行动】</strong>① 48小时内排查智航平台工作流配置，修复总耗电量自动计算功能；② 两周内完成120个采集点ID与智航平台的映射验证，实现能耗月报全自动生成；③ 一个月内将现有问题管理多维表格升级为统一平台，合并低风险冗余字段，增加"已解决"归档机制；④ 申请1-2块180Ah电池备件以满足客户放电合规要求；⑤ 在空闲服务器Docker部署定时脚本替代code body常驻运行，降低安全风险。</p>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 调研背景 -->
+        <section id="background" class="space-y-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-history text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">调研背景</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover border-t-4 border-blue-500">
+                    <div class="text-blue-600 text-4xl mb-4"><i class="fas fa-server"></i></div>
+                    <h3 class="font-bold text-lg mb-2">现状</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">快手站点数据中心能耗统计沿用多年手动Excel流程，每月从动环系统导出120个采集点数据后人工粘贴汇总，误差频发。问题管理依赖飞书多维表格，各区域分散管理，仅供内审合规使用。</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover border-t-4 border-emerald-500">
+                    <div class="text-emerald-600 text-4xl mb-4"><i class="fas fa-chart-line"></i></div>
+                    <h3 class="font-bold text-lg mb-2">历史</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">智航平台已开发完成并接入部分点位，但工作流配置复杂导致总耗电量自动计算未生效。AI应用在其他园区（华东一、华东二）已有落地案例，华北二节奏相对保守。</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover border-t-4 border-amber-500">
+                    <div class="text-amber-600 text-4xl mb-4"><i class="fas fa-rocket"></i></div>
+                    <h3 class="font-bold text-lg mb-2">趋势</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">公司要求人人开发AI智能体，各区域设AI先锋。内网Minimax大模型和智万物平台为私域AI部署提供安全基础，未来有望通过定时脚本+Docker云函数实现低负载自动化。</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-clock text-blue-600"></i>调研时间线</h3>
+                <div class="timeline-line space-y-6 pl-4">
+                    <div class="relative flex items-start gap-4">
+                        <div class="w-4 h-4 bg-blue-600 rounded-full mt-1.5 flex-shrink-0 relative z-10"></div>
+                        <div class="bg-slate-50 rounded-lg p-4 flex-1">
+                            <div class="font-bold text-slate-800">09:47 - 11:28</div>
+                            <div class="text-sm text-slate-500 mb-1">1小时41分钟 · 4人参与</div>
+                            <div class="text-slate-700">课题一：数据中心机房巡检交流与AI应用讨论</div>
+                        </div>
+                    </div>
+                    <div class="relative flex items-start gap-4">
+                        <div class="w-4 h-4 bg-emerald-600 rounded-full mt-1.5 flex-shrink-0 relative z-10"></div>
+                        <div class="bg-slate-50 rounded-lg p-4 flex-1">
+                            <div class="font-bold text-slate-800">15:49 - 16:53</div>
+                            <div class="text-sm text-slate-500 mb-1">1小时3分钟 · 4人参与</div>
+                            <div class="text-slate-700">课题二：数据中心能耗数据核算与问题管理系统调研讨论</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 课题一 -->
+        <section id="topic1" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                    <i class="fas fa-microchip text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">课题一：数据中心机房巡检与AI应用</h2>
+                    <p class="text-slate-500 text-sm">数据中心基础设施全流程巡检 · AI安全落地路径探讨</p>
+                </div>
+            </div>
+
+            <!-- 核心发现 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-lightbulb text-amber-500"></i>核心发现</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 rounded-lg p-4 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-800">发现 01</span>
+                            <span class="status-tag status-high"><i class="fas fa-exclamation-circle"></i>高优先级</span>
+                        </div>
+                        <p class="text-slate-600 text-sm">园区AI落地节奏明显慢于华东一、华东二，付饶要求<strong>优先整理好多维数据、打好数据基础</strong>，暂不急于推进AI。这导致华北二在AI竞赛中处于落后位置。</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-4 border-l-4 border-emerald-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-800">发现 02</span>
+                            <span class="status-tag status-high"><i class="fas fa-shield-alt"></i>安全关键</span>
+                        </div>
+                        <p class="text-slate-600 text-sm">使用外部大模型调取纵横通、智BA数据存在<strong>泄密风险</strong>，园区一直未敢推进。内网Minimax私域部署是兼顾安全与效率的可行方案。</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-4 border-l-4 border-amber-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-800">发现 03</span>
+                            <span class="status-tag status-medium"><i class="fas fa-tools"></i>运维改进</span>
+                        </div>
+                        <p class="text-slate-600 text-sm">T3+级数据中心基础设施完备（双路冗余/PLC自动切换/机械手动备份），但<strong>数字孪生工具体验差</strong>，新采购工具支持CMD自动拉取数据，将改善绘图效率。</p>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-4 border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-800">发现 04</span>
+                            <span class="status-tag status-low"><i class="fas fa-battery-quarter"></i>设备风险</span>
+                        </div>
+                        <p class="text-slate-600 text-sm">UPS铅酸蓄电池使用5年后备电时间衰减超50%，厂家经营问题导致无法及时更换，且<strong>厂家标称备电时间虚高</strong>（按浮充电压计算，非实际放电）。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 基础设施巡检要点 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-sitemap text-blue-600"></i>T3+级基础设施巡检要点</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600"><i class="fas fa-bolt"></i></div>
+                            <div class="font-bold">高低压配电</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 双路A/B进线互为备用</li>
+                            <li>• 九号楼为多楼栋配电上级</li>
+                            <li>• PLC主备自动切换+机械手动</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center text-cyan-600"><i class="fas fa-snowflake"></i></div>
+                            <div class="font-bold">制冷系统</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 冷水机组+冷却塔循环</li>
+                            <li>• 冬季免费制冷模式（板式换热）</li>
+                            <li>• 柳絮季节每日清扫过滤网3遍</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-600"><i class="fas fa-car-battery"></i></div>
+                            <div class="font-bold">电池系统</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 单节电池独立监测（电压/温度/内阻）</li>
+                            <li>• 5年衰减超50%</li>
+                            <li>• 氢气探测器防窒息</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600"><i class="fas fa-gas-pump"></i></div>
+                            <div class="font-bold">柴油发电机</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 卡特彼勒30L排量</li>
+                            <li>• 单台300万+元</li>
+                            <li>• 柴油管道全程保温棉包裹</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600"><i class="fas fa-fire-extinguisher"></i></div>
+                            <div class="font-bold">消防系统</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 核心区：气体灭火（延时20-30s疏散）</li>
+                            <li>• 非核心区：预作用水消防</li>
+                            <li>• 灭火器每月专业团队检测</li>
+                        </ul>
+                    </div>
+                    <div class="metric-card rounded-lg p-4">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600"><i class="fas fa-tv"></i></div>
+                            <div class="font-bold">动环大屏</div>
+                        </div>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>• 数据直接来自动环系统</li>
+                            <li>• 智航平台存在传输延迟</li>
+                            <li>• 新绘图工具支持CMD自动拉取</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI应用安全方案 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-robot text-emerald-600"></i>AI应用安全落地方案对比</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-700">
+                                <th class="text-left p-3 rounded-tl-lg">方案</th>
+                                <th class="text-left p-3">技术路径</th>
+                                <th class="text-left p-3">安全等级</th>
+                                <th class="text-left p-3">实施难度</th>
+                                <th class="text-left p-3 rounded-tr-lg">推荐度</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">方案A：内网大模型</td>
+                                <td class="p-3 text-slate-600">Minimax私域部署，数据全程走公司内网</td>
+                                <td class="p-3"><span class="status-tag status-low"><i class="fas fa-check"></i>高</span></td>
+                                <td class="p-3">中</td>
+                                <td class="p-3"><span class="font-bold text-emerald-600">⭐⭐⭐⭐⭐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">方案B：脚本改造</td>
+                                <td class="p-3 text-slate-600">大模型编写连接动环脚本，替换账号密码</td>
+                                <td class="p-3"><span class="status-tag status-medium"><i class="fas fa-check"></i>中高</span></td>
+                                <td class="p-3">中高</td>
+                                <td class="p-3"><span class="font-bold text-emerald-600">⭐⭐⭐⭐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">方案C：定时脚本+Docker</td>
+                                <td class="p-3 text-slate-600">code body生成脚本→Docker云函数部署</td>
+                                <td class="p-3"><span class="status-tag status-low"><i class="fas fa-check"></i>高</span></td>
+                                <td class="p-3">中</td>
+                                <td class="p-3"><span class="font-bold text-emerald-600">⭐⭐⭐⭐⭐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">方案D：外部大模型直连</td>
+                                <td class="p-3 text-slate-600">直接调用ChatGPT/Claude等分析纵横通数据</td>
+                                <td class="p-3"><span class="status-tag status-high"><i class="fas fa-times"></i>低</span></td>
+                                <td class="p-3">低</td>
+                                <td class="p-3"><span class="font-bold text-red-600">⭐⭐ 不推荐</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 问题与挑战 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-red-500"></i>问题与挑战</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                        <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                        <div>
+                            <div class="font-medium text-slate-800">数据安全隐患</div>
+                            <div class="text-sm text-slate-600">部分园区已使用外部大模型调取运维数据，存在信息泄密风险，华北二尚未找到兼顾安全与效率的平衡点。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
+                        <span class="flex-shrink-0 w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                        <div>
+                            <div class="font-medium text-slate-800">AI技能发布瓶颈</div>
+                            <div class="text-sm text-slate-600">多数AI技能部署在个人电脑，他人无法访问；需经理审核后才能正式发布，流程较长。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                        <span class="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                        <div>
+                            <div class="font-medium text-slate-800">设备老化风险</div>
+                            <div class="text-sm text-slate-600">UPS电池5年后备电衰减超50%，厂家经营困难导致备件供应不及时，且标称备电时间虚高。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 课题二 -->
+        <section id="topic2" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-chart-bar text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">课题二：能耗数据核算与问题管理系统</h2>
+                    <p class="text-slate-500 text-sm">能耗统计偏差根因分析 · 问题管理统一平台建设</p>
+                </div>
+            </div>
+
+            <!-- 能耗核算现状 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-bolt text-amber-500"></i>能耗数据核算现状与偏差分析</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-50 rounded-lg p-5">
+                        <div class="font-bold text-slate-800 mb-3">现有手工流程</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center gap-2"><span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">1</span><span>每月从动环系统导出数据</span></div>
+                            <div class="flex items-center gap-2"><span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">2</span><span>选择时间范围：当月1日0点 → 次月1日0点</span></div>
+                            <div class="flex items-center gap-2"><span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">3</span><span>手动粘贴到历史Excel表格累计统计</span></div>
+                            <div class="flex items-center gap-2"><span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs">4</span><span>120个采集点逐一核对</span></div>
+                        </div>
+                        <div class="mt-3 p-2 bg-red-100 text-red-700 rounded text-xs"><i class="fas fa-exclamation-triangle mr-1"></i>痛点：手工操作容易出错，核对工作量大</div>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-5">
+                        <div class="font-bold text-slate-800 mb-3">五月IT用电量偏差</div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div class="bg-white rounded p-3 text-center">
+                                <div class="text-xs text-slate-500">手动统计</div>
+                                <div class="text-xl font-bold text-blue-600">4,441,327.89</div>
+                                <div class="text-xs text-slate-400">度</div>
+                            </div>
+                            <div class="bg-white rounded p-3 text-center">
+                                <div class="text-xs text-slate-500">智航自动计算</div>
+                                <div class="text-xl font-bold text-emerald-600">4,447,276</div>
+                                <div class="text-xs text-slate-400">度</div>
+                            </div>
+                        </div>
+                        <div class="p-2 bg-amber-100 text-amber-800 rounded text-xs text-center font-medium">
+                            <i class="fas fa-not-equal mr-1"></i>偏差：约 5,948 度（差异率 0.13%）
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">计算逻辑验证：月末值减月初值再累加 → 逻辑正确</div>
+                        <div class="text-xs text-slate-500">单点位抽查：平台与Excel仅差个位数</div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-search text-red-500 mt-1"></i>
+                        <div>
+                            <div class="font-bold text-red-800">偏差根因分析</div>
+                            <div class="text-sm text-red-700 mt-1">120个设备累计偏差不可能达到5000+度（单个点位仅差个位数×120 ≈ 数百度），偏差原因可能包括：①个别点位ID配置错误导致数值错位；②手工粘贴时行列偏移；③动环导出数据与智航读取数据存在时间戳差异；④存在未纳入统计的隐藏采集点。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 智航平台异常 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-bug text-red-500"></i>智航平台功能异常清单</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <span class="status-tag status-high"><i class="fas fa-times-circle"></i>未解决</span>
+                            <div>
+                                <div class="font-medium">总耗电量显示为0</div>
+                                <div class="text-sm text-slate-500">已配置市电进线柜+柴发点位ID，但工作流未生效导致无法自动计算</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-slate-500">已反馈开发人员排查</div>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <span class="status-tag status-medium"><i class="fas fa-spinner"></i>进行中</span>
+                            <div>
+                                <div class="font-medium">118个点位数据待验证</div>
+                                <div class="text-sm text-slate-500">已提供采集点ID给智航平台，需逐一确认映射关系正确</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-slate-500">配置中</div>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <span class="status-tag status-low"><i class="fas fa-check-circle"></i>已解决</span>
+                            <div>
+                                <div class="font-medium">自动采集配置</div>
+                                <div class="text-sm text-slate-500">120个点位ID已全部提供，配置完成后可自动计算总用电量</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-slate-500">ID已提供</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 问题管理系统 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-tasks text-blue-600"></i>问题管理系统建设现状</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="font-bold text-slate-800 mb-3">现有飞书多维表格功能</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>风险分级：低/中/高风险自动标签</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>双审核人流程：不同风险等级对应不同审核节点</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>设备信息自动关联：选择楼栋+设备后自动带出信息</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>仅需填写5个核心字段，其余自动生成</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>计划任务表自动推送daily运维任务</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-emerald-50 rounded">
+                                <i class="fas fa-check text-emerald-600"></i>
+                                <span>全流程无纸化，取消所有纸质记录</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800 mb-3">使用现状与痛点</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-sm p-2 bg-red-50 rounded">
+                                <i class="fas fa-times text-red-600"></i>
+                                <span>仅登记未解决问题，当场解决的小问题不登记</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-red-50 rounded">
+                                <i class="fas fa-times text-red-600"></i>
+                                <span>工程交付类问题单独建表，避免主表过大卡顿</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-red-50 rounded">
+                                <i class="fas fa-times text-red-600"></i>
+                                <span>高风险问题长期挂单，数据失真</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-red-50 rounded">
+                                <i class="fas fa-times text-red-600"></i>
+                                <span>各区域表格分散，领导无法查看汇总数据</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-amber-50 rounded">
+                                <i class="fas fa-exclamation text-amber-600"></i>
+                                <span>主要应付内审环境检查，非真正驱动问题解决</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm p-2 bg-amber-50 rounded">
+                                <i class="fas fa-exclamation text-amber-600"></i>
+                                <span>客户提出问题登记较少，快手检查要求低于字节/阿里</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI辅助数据校验 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-brain text-purple-600"></i>AI辅助数据校验方案</h3>
+                <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-800">飞书工作流内置AI分析</div>
+                            <div class="text-sm text-slate-600 mt-1">利用飞书工作流自带的AI功能，自动分析日报中的PUE等数据，识别填写错误。</div>
+                            <div class="flex gap-4 mt-3">
+                                <div class="bg-white rounded px-3 py-2 text-xs shadow-sm">
+                                    <i class="fas fa-paper-plane text-blue-500 mr-1"></i>推送给管理层
+                                </div>
+                                <div class="bg-white rounded px-3 py-2 text-xs shadow-sm">
+                                    <i class="fas fa-user-cog text-emerald-500 mr-1"></i>各楼负责人自查整改
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 电池与放电计划 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-car-battery text-yellow-600"></i>电池备件与放电计划</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <div class="font-bold mb-2">备件库存现状</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>155Ah电池</span><span class="font-bold text-emerald-600">12块备用 ✅</span></div>
+                            <div class="flex justify-between"><span>180Ah电池</span><span class="font-bold text-red-600">0块备用 ❌</span></div>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">上次更换的180Ah旧电池被拉走未返回</div>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <div class="font-bold mb-2">放电计划调整</div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>原计划</span><span class="line-through text-slate-400">80%负载放电</span></div>
+                            <div class="flex justify-between"><span>调整后</span><span class="font-bold text-blue-600">60%负载放电（按原标准）</span></div>
+                            <div class="flex justify-between"><span>时间</span><span>6月4日 - 6月11日</span></div>
+                        </div>
+                        <div class="mt-2 text-xs text-slate-500">周六日暂停，周四五完成两天放电</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50 text-amber-800 rounded-lg text-sm">
+                    <i class="fas fa-exclamation-circle mr-2"></i><strong>合规要求：</strong>客户要求放电必须备有备件，需尽快申请1-2块180Ah电池。
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 综合结论 -->
+        <section id="conclusion" class="space-y-8 print-break">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                    <i class="fas fa-flag-checkered text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">综合结论与行动计划</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-bolt text-2xl"></i>
+                        <h3 class="font-bold text-xl">能耗核算课题结论</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-blue-100">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>手工Excel统计流程已无法满足120个采集点的精度要求，自动化替代条件成熟</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>智航平台计算逻辑正确，偏差根因在于配置未生效或个别点位映射错误</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>能耗月报全自动生成可在一周内实现，前提是修复工作流配置</span></li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-tasks text-2xl"></i>
+                        <h3 class="font-bold text-xl">问题管理课题结论</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-emerald-100">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>现有飞书多维表格功能已覆盖风险分级、双审核、自动关联等核心需求</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>轻量化原则正确，但"仅登记未解决问题"导致数据失真，需增加归档机制</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>统一平台整合各区域数据是领导层刚需，建议保留现有表格作为前端入口</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 行动计划 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-calendar-check text-blue-600"></i>优先级行动计划</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-4 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                        <div class="flex-shrink-0 w-16 text-center">
+                            <div class="text-xs text-red-600 font-bold">P0</div>
+                            <div class="text-xs text-red-500">48h</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800">排查智航平台工作流配置</div>
+                            <div class="text-sm text-slate-600">修复总耗电量显示为0的问题，确认市电进线柜+柴发点位ID配置生效</div>
+                        </div>
+                        <div class="status-tag status-high">紧急</div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                        <div class="flex-shrink-0 w-16 text-center">
+                            <div class="text-xs text-amber-600 font-bold">P1</div>
+                            <div class="text-xs text-amber-500">1周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800">完成120个采集点映射验证</div>
+                            <div class="text-sm text-slate-600">逐一点位核对智航平台数据与动环系统数据，确保自动计算准确</div>
+                        </div>
+                        <div class="status-tag status-medium">重要</div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-500">
+                        <div class="flex-shrink-0 w-16 text-center">
+                            <div class="text-xs text-amber-600 font-bold">P1</div>
+                            <div class="text-xs text-amber-500">1周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800">申请180Ah电池备件</div>
+                            <div class="text-sm text-slate-600">申请1-2块180Ah电池以满足客户放电合规要求</div>
+                        </div>
+                        <div class="status-tag status-medium">重要</div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <div class="flex-shrink-0 w-16 text-center">
+                            <div class="text-xs text-blue-600 font-bold">P2</div>
+                            <div class="text-xs text-blue-500">2周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800">问题管理多维表格升级</div>
+                            <div class="text-sm text-slate-600">增加"已解决"归档机制，合并低风险冗余字段，优化表格性能</div>
+                        </div>
+                        <div class="status-tag status-info">规划</div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <div class="flex-shrink-0 w-16 text-center">
+                            <div class="text-xs text-blue-600 font-bold">P2</div>
+                            <div class="text-xs text-blue-500">1月</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800">AI定时脚本Docker化部署</div>
+                            <div class="text-sm text-slate-600">在空闲服务器部署定时脚本替代code body常驻运行，申请Minimax token</div>
+                        </div>
+                        <div class="status-tag status-info">规划</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 附录 -->
+        <section class="bg-white rounded-xl shadow-md p-6 print-break">
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-paperclip text-slate-500"></i>附录</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">数据来源</h4>
+                    <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• Get笔记会议录音转写文本</li>
+                        <li>• 会议1：数据中心机房巡检交流与AI应用讨论（2026-06-02 09:47）</li>
+                        <li>• 会议2：数据中心能耗数据核算与问题管理系统调研讨论（2026-06-02 15:49）</li>
+                        <li>• 录音总时长：约2小时44分钟</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">术语表</h4>
+                    <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• <strong>PUE</strong>：能源使用效率，数据中心总耗电量/IT设备耗电量</li>
+                        <li>• <strong>智航平台</strong>：数据中心运维数字化管理平台</li>
+                        <li>• <strong>动环系统</strong>：动力环境监控系统</li>
+                        <li>• <strong>code body</strong>：AI编程助手工具</li>
+                        <li>• <strong>Minimax</strong>：公司内部私域部署的大模型</li>
+                        <li>• <strong>T3+</strong>：数据中心可用性等级（Tier 3+）</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t text-xs text-slate-400 text-center">
+                本报告由 AI 基于现场会议录音自动生成 · 生成时间：2026-06-02 · 仅供内部参考
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

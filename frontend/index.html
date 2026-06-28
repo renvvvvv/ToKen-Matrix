@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token 母体 · 机房智能运维 AI Agent 系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ==================== HEADER / NAVBAR ==================== -->
+    <header class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo-section">
+                    <!-- 品牌 Logo：双眼守护 Token -->
+                    <div class="logo-mark" aria-label="Token 母体 Logo">
+                        <svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="logo-grad" x1="0" x2="1" y1="0" y2="1">
+                                    <stop offset="0" stop-color="#0EA5E9"/>
+                                    <stop offset="1" stop-color="#06B6D4"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- 左眼/手 -->
+                            <path d="M6 24 Q14 8 24 14" stroke="url(#logo-grad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <!-- 右眼/手 -->
+                            <path d="M42 24 Q34 8 24 14" stroke="url(#logo-grad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <!-- 中心 Token -->
+                            <circle cx="24" cy="28" r="8" fill="url(#logo-grad)"/>
+                            <circle cx="24" cy="28" r="3" fill="#FFFFFF" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="brand-info">
+                        <h1 class="brand-name">Token 母体</h1>
+                        <p class="brand-tagline">机房自动驾驶 · 双闭环守护</p>
+                    </div>
+                </div>
+                <nav class="nav-links">
+                    <a href="#matrix" class="nav-link">母体</a>
+                    <a href="#architecture" class="nav-link">架构</a>
+                    <a href="#demo" class="nav-link">Demo</a>
+                    <a href="https://github.com" class="nav-link nav-highlight" target="_blank">GitHub ↗</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HERO · TOKEN 母体动画 ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg-grid"></div>
+        <div class="container">
+            <div class="hero-grid">
+                <!-- 左侧：文案 -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        <span>Token Matrix · v1.1</span>
+                    </div>
+                    <h2 class="hero-title">
+                        让每一个 <span class="title-token">Token</span><br/>
+                        都被<span class="title-accent">双手呵护</span>
+                    </h2>
+                    <p class="hero-subtitle">
+                        Token 是机房的原子能量单元 · 母体是孕育它的中枢
+                    </p>
+                    <p class="hero-description">
+                        值班长的手 + AI Agent 的手，上托下护，共同呵护每一个 Token 的诞生、流转与归宿。
+                        以 Hermes 缰绳约束，多 Agent 闭环驱动，集团经验飞轮共享。
+                    </p>
+                    <div class="hero-cta">
+                        <a href="http://localhost:8000/console" target="_blank" class="cta-button primary">
+                            <span>进入母体</span>
+                            <span class="arrow">▶</span>
+                        </a>
+                        <a href="#demo-cards" class="cta-button secondary">
+                            <span>查看 Demo</span>
+                        </a>
+                    </div>
+
+                    <!-- 投入 Token 输入 -->
+                    <div class="token-input-wrap">
+                        <input type="text" class="token-input" id="token-input" placeholder="向母体投入一个 Token：冷却告警 / 电池温度 / 工单..." />
+                        <button class="token-input-btn" id="token-input-btn">投入 ⟶</button>
+                    </div>
+                    <div class="token-hint">试试投入：<span class="chip" data-token="冷却告警">冷却告警</span><span class="chip" data-token="UPS 电池">UPS 电池</span><span class="chip" data-token="消防巡检">消防巡检</span></div>
+                </div>
+
+                <!-- 右侧：Token 母体动画核心 -->
+                <div class="matrix-stage" id="matrix-stage">
+                    <svg class="matrix-svg" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg" aria-label="Token 母体守护动画">
+                        <defs>
+                            <!-- 浅蓝渐变 -->
+                            <radialGradient id="core-grad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%"  stop-color="#FFFFFF" stop-opacity="0.95"/>
+                                <stop offset="40%" stop-color="#7DD3FC" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.85"/>
+                            </radialGradient>
+                            <linearGradient id="hand-grad" x1="0" x2="1" y1="0" y2="1">
+                                <stop offset="0" stop-color="#0EA5E9"/>
+                                <stop offset="1" stop-color="#06B6D4"/>
+                            </linearGradient>
+                            <radialGradient id="eye-grad" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#FFFFFF"/>
+                                <stop offset="60%" stop-color="#BAE6FD"/>
+                                <stop offset="100%" stop-color="#0284C7"/>
+                            </radialGradient>
+                            <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="6" result="b"/>
+                                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- 外层光环（呼吸） -->
+                        <circle class="ring ring-outer" cx="260" cy="260" r="220" fill="none" stroke="#7DD3FC" stroke-width="1" stroke-dasharray="2 8" opacity="0.5"/>
+                        <circle class="ring ring-mid"   cx="260" cy="260" r="180" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="4 6" opacity="0.6"/>
+                        <circle class="ring ring-inner" cx="260" cy="260" r="140" fill="none" stroke="#0EA5E9" stroke-width="1.2" opacity="0.65"/>
+
+                        <!-- 8 个方向出射通道（用户方向/使用方向/目的） -->
+                        <g class="channels" opacity="0.55" stroke="#0EA5E9" stroke-width="1" fill="none">
+                            <line x1="260" y1="260" x2="260" y2="40"/>
+                            <line x1="260" y1="260" x2="260" y2="480"/>
+                            <line x1="260" y1="260" x2="40"  y2="260"/>
+                            <line x1="260" y1="260" x2="480" y2="260"/>
+                            <line x1="260" y1="260" x2="105" y2="105"/>
+                            <line x1="260" y1="260" x2="415" y2="105"/>
+                            <line x1="260" y1="260" x2="105" y2="415"/>
+                            <line x1="260" y1="260" x2="415" y2="415"/>
+                        </g>
+
+                        <!-- ============ 母体 = 一双呵护的手 ============ -->
+                        <!-- 上方左手（手心朝下，护住 Token 上半） -->
+                        <g class="guardian-hand hand-top-left">
+                            <!-- 手掌主体 -->
+                            <path d="M70 150
+                                     C 80 90, 140 50, 210 75
+                                     C 240 85, 255 110, 258 135
+                                     L 250 165
+                                     C 230 175, 200 175, 175 168
+                                     C 145 160, 110 165, 90 175
+                                     C 75 168, 68 160, 70 150 Z"
+                                  fill="url(#hand-grad)" opacity="0.92"
+                                  stroke="#FFFFFF" stroke-width="1.5"/>
+                            <!-- 拇指 -->
+                            <path d="M248 130 C 268 128, 278 145, 270 162 C 262 170, 252 168, 248 158 Z"
+                                  fill="url(#hand-grad)" opacity="0.95" stroke="#FFFFFF" stroke-width="1.2"/>
+                            <!-- 四指分隔线（高光） -->
+                            <path d="M150 80 Q 160 120 175 165" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M180 72 Q 195 115 210 168" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M210 75 Q 222 115 235 170" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                        </g>
+
+                        <!-- 上方右手（镜像） -->
+                        <g class="guardian-hand hand-top-right">
+                            <path d="M450 150
+                                     C 440 90, 380 50, 310 75
+                                     C 280 85, 265 110, 262 135
+                                     L 270 165
+                                     C 290 175, 320 175, 345 168
+                                     C 375 160, 410 165, 430 175
+                                     C 445 168, 452 160, 450 150 Z"
+                                  fill="url(#hand-grad)" opacity="0.92"
+                                  stroke="#FFFFFF" stroke-width="1.5"/>
+                            <path d="M272 130 C 252 128, 242 145, 250 162 C 258 170, 268 168, 272 158 Z"
+                                  fill="url(#hand-grad)" opacity="0.95" stroke="#FFFFFF" stroke-width="1.2"/>
+                            <path d="M370 80 Q 360 120 345 165" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M340 72 Q 325 115 310 168" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M310 75 Q 298 115 285 170" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <text x="260" y="38" text-anchor="middle" class="guardian-label">值班长 · 人在环</text>
+                        </g>
+
+                        <!-- 下方左手（手心朝上，托住 Token 下半） -->
+                        <g class="guardian-hand hand-bot-left">
+                            <path d="M70 370
+                                     C 80 430, 140 470, 210 445
+                                     C 240 435, 255 410, 258 385
+                                     L 250 355
+                                     C 230 345, 200 345, 175 352
+                                     C 145 360, 110 355, 90 345
+                                     C 75 352, 68 360, 70 370 Z"
+                                  fill="url(#hand-grad)" opacity="0.92"
+                                  stroke="#FFFFFF" stroke-width="1.5"/>
+                            <path d="M248 390 C 268 392, 278 375, 270 358 C 262 350, 252 352, 248 362 Z"
+                                  fill="url(#hand-grad)" opacity="0.95" stroke="#FFFFFF" stroke-width="1.2"/>
+                            <path d="M150 440 Q 160 400 175 355" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M180 448 Q 195 405 210 352" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M210 445 Q 222 405 235 350" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                        </g>
+
+                        <!-- 下方右手（镜像） -->
+                        <g class="guardian-hand hand-bot-right">
+                            <path d="M450 370
+                                     C 440 430, 380 470, 310 445
+                                     C 280 435, 265 410, 262 385
+                                     L 270 355
+                                     C 290 345, 320 345, 345 352
+                                     C 375 360, 410 355, 430 345
+                                     C 445 352, 452 360, 450 370 Z"
+                                  fill="url(#hand-grad)" opacity="0.92"
+                                  stroke="#FFFFFF" stroke-width="1.5"/>
+                            <path d="M272 390 C 252 392, 242 375, 250 358 C 258 350, 268 352, 272 362 Z"
+                                  fill="url(#hand-grad)" opacity="0.95" stroke="#FFFFFF" stroke-width="1.2"/>
+                            <path d="M370 440 Q 360 400 345 355" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M340 448 Q 325 405 310 352" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <path d="M310 445 Q 298 405 285 350" stroke="#FFFFFF" stroke-width="1" fill="none" opacity="0.35"/>
+                            <text x="260" y="494" text-anchor="middle" class="guardian-label">AI Agent · 自主闭环</text>
+                        </g>
+
+                        <!-- 中心母体 Token 圆 -->
+                        <g class="core" filter="url(#soft-glow)">
+                            <circle cx="260" cy="260" r="80" fill="url(#core-grad)"/>
+                            <circle cx="260" cy="260" r="80" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.7"/>
+                            <text x="260" y="255" text-anchor="middle" class="core-label">TOKEN</text>
+                            <text x="260" y="278" text-anchor="middle" class="core-sub">母体</text>
+                        </g>
+
+                        <!-- 8 个方向终点标签：使用方向 / 目的 -->
+                        <g class="endpoints">
+                            <g class="ep" data-dir="N">  <circle cx="260" cy="40"  r="14" fill="#E0F2FE" stroke="#0EA5E9"/><text x="260" y="22" text-anchor="middle">采集</text></g>
+                            <g class="ep" data-dir="S">  <circle cx="260" cy="480" r="14" fill="#E0F2FE" stroke="#0EA5E9"/><text x="260" y="502" text-anchor="middle">反馈</text></g>
+                            <g class="ep" data-dir="W">  <circle cx="40"  cy="260" r="14" fill="#E0F2FE" stroke="#0EA5E9"/><text x="40"  y="290" text-anchor="middle">决策</text></g>
+                            <g class="ep" data-dir="E">  <circle cx="480" cy="260" r="14" fill="#E0F2FE" stroke="#0EA5E9"/><text x="480" y="290" text-anchor="middle">执行</text></g>
+                            <g class="ep" data-dir="NW"> <circle cx="105" cy="105" r="12" fill="#E0F2FE" stroke="#0EA5E9"/><text x="105" y="88"  text-anchor="middle">冷却</text></g>
+                            <g class="ep" data-dir="NE"> <circle cx="415" cy="105" r="12" fill="#E0F2FE" stroke="#0EA5E9"/><text x="415" y="88"  text-anchor="middle">电源</text></g>
+                            <g class="ep" data-dir="SW"> <circle cx="105" cy="415" r="12" fill="#E0F2FE" stroke="#0EA5E9"/><text x="105" y="438" text-anchor="middle">消防</text></g>
+                            <g class="ep" data-dir="SE"> <circle cx="415" cy="415" r="12" fill="#E0F2FE" stroke="#0EA5E9"/><text x="415" y="438" text-anchor="middle">网络</text></g>
+                        </g>
+
+                        <!-- 动画粒子容器（JS 注入） -->
+                        <g id="particles"></g>
+                    </svg>
+
+                    <!-- 状态标签 -->
+                    <div class="stage-legend">
+                        <span class="legend-item"><i class="dot dot-human"></i>值班长之手</span>
+                        <span class="legend-item"><i class="dot dot-ai"></i>Agent 之手</span>
+                        <span class="legend-item"><i class="dot dot-token"></i>Token 流</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 母体概念解读 ==================== -->
+    <section class="matrix-intro" id="matrix">
+        <div class="container">
+            <h2 class="section-title">什么是「Token 母体」</h2>
+            <p class="section-subtitle">以数据中心为母体 · 以 Token 为原子 · 以双手为缰绳</p>
+
+            <div class="intro-grid">
+                <div class="intro-card">
+                    <div class="intro-icon">🔵</div>
+                    <h3 class="intro-title">Token · 原子</h3>
+                    <p class="intro-text">
+                        每一次告警、每一次决策、每一条工单，都是机房母体中流转的最小能量单元——Token。
+                    </p>
+                </div>
+                <div class="intro-card">
+                    <div class="intro-icon">🤲</div>
+                    <h3 class="intro-title">双手 · 呵护</h3>
+                    <p class="intro-text">
+                        值班长之手 + AI Agent 之手，上托下护构成"人在环 + 自主控制"的双闭环，互为冗余、互为校验。
+                    </p>
+                </div>
+                <div class="intro-card">
+                    <div class="intro-icon">🌐</div>
+                    <h3 class="intro-title">母体 · 飞轮</h3>
+                    <p class="intro-text">
+                        每一个 Token 都汇入集团母体，沉淀为可复用的经验飞轮——从一座机房，到一张大网。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES SHOWCASE ==================== -->
+    <section class="features-showcase" id="demo">
+        <div class="container">
+            <h2 class="section-title">核心能力展示</h2>
+
+            <div class="demo-cards-grid" id="demo-cards">
+                <div class="demo-card">
+                    <div class="card-badge">流程 ①</div>
+                    <div class="card-icon">🔍</div>
+                    <h3 class="card-title">Web Surfer 自主研究员</h3>
+                    <p class="card-subtitle">论文学习 + 数据回测</p>
+                    <p class="card-description">
+                        自动搜索、阅读学术论文，提取冷却、电力等领域的最新方案，结合实时数据进行回测验证。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">智谱搜索</span>
+                        <span class="tag">论文分析</span>
+                        <span class="tag">数据验证</span>
+                    </div>
+                    <a href="./demos/demo-01-web-surfer.html" target="_blank" class="card-cta">进入 Demo ▶</a>
+                </div>
+
+                <div class="demo-card">
+                    <div class="card-badge">流程 ②</div>
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">预测推荐执行官</h3>
+                    <p class="card-subtitle">人在环审批 + 自主控制</p>
+                    <p class="card-description">
+                        实时预测系统运行状态，基于安全准则生成操作推荐，支持人工审批后自主下发控制命令。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">时间序列预测</span>
+                        <span class="tag">安全校验</span>
+                        <span class="tag">人在环</span>
+                    </div>
+                    <a href="./demos/demo-02-predict-recommend.html" target="_blank" class="card-cta">进入 Demo ▶</a>
+                </div>
+
+                <div class="demo-card">
+                    <div class="card-badge">流程 ③</div>
+                    <div class="card-icon">🚨</div>
+                    <h3 class="card-title">Hermes 全场景告警广度</h3>
+                    <p class="card-subtitle">7+ 场景 + 自动通知</p>
+                    <p class="card-description">
+                        涵盖冷却、电源、消防、CCTV、网络等 7+ 子系统，告警自动触发 Skill 并派单通知。
+                    </p>
+                    <div class="card-tags">
+                        <span class="tag">多场景</span>
+                        <span class="tag">自动通知</span>
+                        <span class="tag">工单派发</span>
+                    </div>
+                    <a href="./demos/demo-03-hermes-scenarios.html" target="_blank" class="card-cta">进入 Demo ▶</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ARCHITECTURE ==================== -->
+    <section class="architecture" id="architecture">
+        <div class="container">
+            <h2 class="section-title">系统五层架构</h2>
+            <p class="section-subtitle">点击各层了解详情 · Hover 查看职责</p>
+
+            <div class="arch-layers">
+                <div class="arch-layer layer-l5 vision">
+                    <div class="layer-number">L5</div>
+                    <div class="layer-content">
+                        <h4 class="layer-title">集团总部大脑 HQ Brain</h4>
+                        <p class="layer-desc">跨机房经验聚合 · 外学习引擎 · 策略下发</p>
+                    </div>
+                    <div class="layer-note">
+                        <span class="vision-badge">远景</span>
+                        <p class="note-text">Phase 3 远景，本 Demo 未演示</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer layer-l4">
+                    <div class="layer-number">L4</div>
+                    <div class="layer-content">
+                        <h4 class="layer-title">事件接入与工单层</h4>
+                        <p class="layer-desc">Event Bus · openclaw 派单 · 飞书通知</p>
+                    </div>
+                    <div class="layer-action">
+                        <a href="/demo/hermes-scenarios#workorder" class="layer-link">▶ 查看流程③</a>
+                    </div>
+                </div>
+
+                <div class="arch-layer layer-l3">
+                    <div class="layer-number">L3</div>
+                    <div class="layer-content">
+                        <h4 class="layer-title">Hermes 工程底座</h4>
+                        <p class="layer-desc">Skill + Tool + 准则 + 角色化 SOP</p>
+                    </div>
+                    <div class="layer-action">
+                        <a href="/hermes" class="layer-link">▶ 进入详情</a>
+                    </div>
+                </div>
+
+                <div class="arch-layer layer-l2">
+                    <div class="layer-number">L2</div>
+                    <div class="layer-content">
+                        <h4 class="layer-title">子系统适配层</h4>
+                        <p class="layer-desc">BA · 动环 · 消防 · CCTV · UPS · 配电 · 网络</p>
+                        <div class="subsystems">
+                            <span class="subsystem-icon" title="冷却">❄️</span>
+                            <span class="subsystem-icon" title="电源">🔋</span>
+                            <span class="subsystem-icon" title="消防">🔥</span>
+                            <span class="subsystem-icon" title="CCTV">📹</span>
+                            <span class="subsystem-icon" title="UPS">⚡</span>
+                            <span class="subsystem-icon" title="配电">📡</span>
+                            <span class="subsystem-icon" title="网络">🌐</span>
+                        </div>
+                    </div>
+                    <div class="layer-action">
+                        <a href="/demo/hermes-scenarios?scenario=cooling" class="layer-link">▶ 查看场景</a>
+                    </div>
+                </div>
+
+                <div class="arch-layer layer-l1">
+                    <div class="layer-number">L1</div>
+                    <div class="layer-content">
+                        <h4 class="layer-title">数据 & 设备层</h4>
+                        <p class="layer-desc">telemetry · 智谱 Search · 预测模型</p>
+                    </div>
+                    <div class="layer-action">
+                        <a href="/demo/web-surfer#telemetry" class="layer-link">▶ 流程①</a>
+                        <a href="/demo/predict-recommend" class="layer-link">▶ 流程②</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4 class="footer-title">关于项目</h4>
+                    <p class="footer-text">
+                        Beyond Prompt · Agents in Action 黑客松参赛项目，目标分数：83 分
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">快速链接</h4>
+                    <a href="https://github.com" class="footer-link" target="_blank">GitHub 仓库 ↗</a>
+                    <a href="#" class="footer-link">设计文档 ↗</a>
+                    <a href="#" class="footer-link">技术栈 ↗</a>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-title">感谢致敬</h4>
+                    <p class="footer-text">
+                        感谢智谱、飞书、openclaw、LangGraph 等开源社区的支持
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="copyright">&copy; 2026 Token 母体 · 机房智能运维系统</p>
+                <p class="footer-info">v1.1 · Made with 💙 for Hackathon</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ====== Token 粒子动画：从中心投出 → 沿 8 方向飞至端点 ======
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        const stage = document.getElementById('matrix-stage');
+        const particlesG = document.getElementById('particles');
+
+        // 8 个端点坐标
+        const endpoints = [
+            { x: 260, y: 40,  label: '采集' },
+            { x: 260, y: 480, label: '反馈' },
+            { x: 40,  y: 260, label: '决策' },
+            { x: 480, y: 260, label: '执行' },
+            { x: 105, y: 105, label: '冷却' },
+            { x: 415, y: 105, label: '电源' },
+            { x: 105, y: 415, label: '消防' },
+            { x: 415, y: 415, label: '网络' },
+        ];
+
+        function spawnToken(targetIdx, text) {
+            const t = endpoints[targetIdx];
+            const g = document.createElementNS(SVG_NS, 'g');
+            g.setAttribute('class', 'particle');
+
+            const circle = document.createElementNS(SVG_NS, 'circle');
+            circle.setAttribute('cx', 260);
+            circle.setAttribute('cy', 260);
+            circle.setAttribute('r', 7);
+            circle.setAttribute('fill', '#0EA5E9');
+            circle.setAttribute('stroke', '#FFFFFF');
+            circle.setAttribute('stroke-width', '1.5');
+            g.appendChild(circle);
+
+            if (text) {
+                const txt = document.createElementNS(SVG_NS, 'text');
+                txt.setAttribute('x', 260);
+                txt.setAttribute('y', 260 - 12);
+                txt.setAttribute('text-anchor', 'middle');
+                txt.setAttribute('class', 'particle-label');
+                txt.textContent = text;
+                g.appendChild(txt);
+            }
+
+            particlesG.appendChild(g);
+
+            // 动画
+            const start = performance.now();
+            const duration = 1400;
+            const sx = 260, sy = 260;
+            function step(now) {
+                const p = Math.min(1, (now - start) / duration);
+                const ease = 1 - Math.pow(1 - p, 3);
+                const cx = sx + (t.x - sx) * ease;
+                const cy = sy + (t.y - sy) * ease;
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                if (text) {
+                    g.querySelector('text').setAttribute('x', cx);
+                    g.querySelector('text').setAttribute('y', cy - 12);
+                }
+                circle.setAttribute('opacity', 1 - p * 0.4);
+                if (p < 1) requestAnimationFrame(step);
+                else {
+                    // 抵达后高亮终点 + 移除粒子
+                    const ep = document.querySelectorAll('.endpoints .ep')[targetIdx];
+                    ep?.classList.add('ep-hit');
+                    setTimeout(() => ep?.classList.remove('ep-hit'), 800);
+                    g.remove();
+                }
+            }
+            requestAnimationFrame(step);
+        }
+
+        // 自动循环投放 Token（每隔 700ms 随机方向）
+        let autoIdx = 0;
+        setInterval(() => {
+            const i = autoIdx % endpoints.length;
+            spawnToken(i);
+            autoIdx++;
+        }, 700);
+
+        // 用户主动投入
+        const tokenInput = document.getElementById('token-input');
+        const tokenBtn = document.getElementById('token-input-btn');
+        function userInject(text) {
+            const value = (text || tokenInput.value || '').trim();
+            if (!value) return;
+            // 关键词 → 方向映射
+            const map = [
+                { kw: ['冷却','冷冻','制冷'], idx: 4 },
+                { kw: ['电源','电池','UPS','配电'], idx: 5 },
+                { kw: ['消防','烟感','火'], idx: 6 },
+                { kw: ['网络','带宽','交换机','CCTV','监控'], idx: 7 },
+                { kw: ['采集','telemetry','传感'], idx: 0 },
+                { kw: ['反馈','工单','派单'], idx: 1 },
+                { kw: ['决策','推荐','预测'], idx: 2 },
+                { kw: ['执行','控制','下发'], idx: 3 },
+            ];
+            let target = Math.floor(Math.random() * 8);
+            for (const m of map) {
+                if (m.kw.some(k => value.includes(k))) { target = m.idx; break; }
+            }
+            spawnToken(target, value.slice(0, 6));
+            tokenInput.value = '';
+        }
+        tokenBtn?.addEventListener('click', () => userInject());
+        tokenInput?.addEventListener('keydown', e => { if (e.key === 'Enter') userInject(); });
+        document.querySelectorAll('.token-hint .chip').forEach(c => {
+            c.addEventListener('click', () => userInject(c.dataset.token));
+        });
+
+        // 瞳孔随中心呼吸：聚焦中央 token
+        // （CSS 动画处理，无需 JS）
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体工作台 - 电力交易AGENT运营平台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0f1c;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        :root {
+            --primary: #165DFF;
+            --primary-light: #06b6d4;
+            --success: #00B42A;
+            --warning: #FF7D00;
+            --danger: #F53F3F;
+            --agent-master: #8B5CF6;
+            --agent-perception: #06b6d4;
+            --agent-trading: #00B42A;
+            --agent-dispatch: #FF7D00;
+            --agent-risk: #F53F3F;
+            --agent-learning: #ec4899;
+            --bg-dark: #0a0f1c;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+        }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #165DFF 0%, #06b6d4 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-section { margin-bottom: 24px; }
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .nav-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-item.active { background: rgba(22, 93, 255, 0.15); color: var(--primary); }
+        .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+
+        /* Agent Avatar Styles */
+        .agent-avatar-wrapper {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .agent-avatar-svg {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-avatar-master {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.5);
+        }
+        .agent-avatar-master::before { content: '🧠'; font-size: 22px; }
+        .agent-avatar-master::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: var(--agent-master);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--agent-master);
+        }
+
+        .agent-avatar-perception {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid rgba(6, 182, 212, 0.5);
+        }
+        .agent-avatar-perception::before { content: '👁️'; font-size: 22px; }
+        .agent-avatar-perception .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--agent-perception), transparent);
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .agent-avatar-trading {
+            background: linear-gradient(135deg, rgba(0, 180, 42, 0.2) 0%, rgba(0, 180, 42, 0.1) 100%);
+            border: 2px solid rgba(0, 180, 42, 0.5);
+        }
+        .agent-avatar-trading::before { content: '🧮'; font-size: 22px; }
+
+        .agent-avatar-dispatch {
+            background: linear-gradient(135deg, rgba(255, 125, 0, 0.2) 0%, rgba(255, 125, 0, 0.1) 100%);
+            border: 2px solid rgba(255, 125, 0, 0.5);
+        }
+        .agent-avatar-dispatch::before { content: '⚡'; font-size: 22px; }
+
+        .agent-avatar-risk {
+            background: linear-gradient(135deg, rgba(245, 63, 63, 0.2) 0%, rgba(245, 63, 63, 0.1) 100%);
+            border: 2px solid rgba(245, 63, 63, 0.5);
+        }
+        .agent-avatar-risk::before { content: '🛡️'; font-size: 22px; }
+
+        .agent-avatar-learning {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 2px solid rgba(236, 72, 153, 0.5);
+        }
+        .agent-avatar-learning::before { content: '📚'; font-size: 22px; }
+
+        .agent-status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+        .agent-status-dot.running { 
+            background: var(--success); 
+            box-shadow: 0 0 6px var(--success);
+            animation: pulse 2s infinite; 
+        }
+        .agent-status-dot.standby { background: var(--text-muted); }
+        .agent-status-dot.warning { background: var(--warning); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.9); }
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #165DFF 0%, #06b6d4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .user-name { font-size: 14px; font-weight: 600; }
+        .user-role { font-size: 12px; color: var(--text-muted); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Agent Detail Drawer - Digital Employee Profile */
+        .agent-drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .agent-drawer-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .agent-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 420px;
+            height: 100vh;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            z-index: 201;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .agent-drawer.show {
+            transform: translateX(0);
+        }
+
+        /* Drawer Header - Employee Card Style */
+        .agent-drawer-header {
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(22, 93, 255, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .agent-drawer-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .agent-drawer-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .agent-profile-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .agent-profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .agent-profile-avatar.perception {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border-color: var(--agent-perception);
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.2);
+        }
+
+        .agent-profile-avatar.trading {
+            background: linear-gradient(135deg, rgba(0, 180, 42, 0.3) 0%, rgba(0, 180, 42, 0.1) 100%);
+            border-color: var(--agent-trading);
+            box-shadow: 0 8px 32px rgba(0, 180, 42, 0.2);
+        }
+
+        .agent-profile-avatar.dispatch {
+            background: linear-gradient(135deg, rgba(255, 125, 0, 0.3) 0%, rgba(255, 125, 0, 0.1) 100%);
+            border-color: var(--agent-dispatch);
+            box-shadow: 0 8px 32px rgba(255, 125, 0, 0.2);
+        }
+
+        .agent-profile-avatar.risk {
+            background: linear-gradient(135deg, rgba(245, 63, 63, 0.3) 0%, rgba(245, 63, 63, 0.1) 100%);
+            border-color: var(--agent-risk);
+            box-shadow: 0 8px 32px rgba(245, 63, 63, 0.2);
+        }
+
+        .agent-profile-avatar.learning {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.3) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border-color: var(--agent-learning);
+            box-shadow: 0 8px 32px rgba(236, 72, 153, 0.2);
+        }
+
+        .agent-profile-status {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
+            background: var(--success);
+            border: 3px solid var(--bg-card);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .agent-profile-info { flex: 1; }
+        .agent-profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .agent-profile-role {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .agent-profile-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(0, 180, 42, 0.15);
+            border: 1px solid rgba(0, 180, 42, 0.3);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--success);
+        }
+
+        .agent-profile-quote {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            font-size: 12px;
+            font-style: italic;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Drawer Content */
+        .agent-drawer-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Working Illustration */
+        .agent-working-section {
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .agent-working-illustration {
+            height: 140px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+
+        /* 鹰眼 - 扫描工作 */
+        .illustration-perception {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.05));
+        }
+        .eye-scanner {
+            width: 60px;
+            height: 40px;
+            border: 3px solid var(--agent-perception);
+            border-radius: 50%;
+            position: relative;
+            animation: eyeBlink 3s infinite;
+        }
+        .eye-scanner::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: var(--agent-perception);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--agent-perception);
+        }
+        .scan-beam {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--agent-perception), transparent);
+            animation: scanBeam 1.5s linear infinite;
+        }
+        @keyframes eyeBlink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        @keyframes scanBeam {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .data-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--agent-perception);
+            border-radius: 50%;
+            animation: floatUp 2s linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100px) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-20px) scale(1); opacity: 0; }
+        }
+
+        /* 算盘 - 计算工作 */
+        .illustration-trading {
+            background: linear-gradient(135deg, rgba(0, 180, 42, 0.1), rgba(0, 180, 42, 0.05));
+        }
+        .abacus {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .abacus-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: 80px;
+            height: 8px;
+            background: rgba(0, 180, 42, 0.3);
+            border-radius: 4px;
+            position: relative;
+        }
+        .abacus-bead {
+            width: 12px;
+            height: 12px;
+            background: var(--agent-trading);
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            animation: slideBead 1s ease-in-out infinite alternate;
+        }
+        .abacus-row:nth-child(1) .abacus-bead { animation-delay: 0s; left: 10%; }
+        .abacus-row:nth-child(2) .abacus-bead { animation-delay: 0.2s; left: 30%; }
+        .abacus-row:nth-child(3) .abacus-bead { animation-delay: 0.4s; left: 50%; }
+        .abacus-row:nth-child(4) .abacus-bead { animation-delay: 0.6s; left: 70%; }
+        @keyframes slideBead {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(20px); }
+        }
+        .number-bubble {
+            position: absolute;
+            font-size: 11px;
+            color: var(--agent-trading);
+            font-weight: 600;
+            animation: numberPop 1s ease-out infinite;
+        }
+        @keyframes numberPop {
+            0% { transform: scale(0) translateY(0); opacity: 0; }
+            50% { transform: scale(1.2) translateY(-10px); opacity: 1; }
+            100% { transform: scale(1) translateY(-20px); opacity: 0; }
+        }
+
+        /* 闪电 - 执行工作 */
+        .illustration-dispatch {
+            background: linear-gradient(135deg, rgba(255, 125, 0, 0.1), rgba(255, 125, 0, 0.05));
+        }
+        .lightning-bolt {
+            font-size: 48px;
+            animation: lightningFlash 0.5s ease-in-out infinite;
+        }
+        @keyframes lightningFlash {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+        .command-lines {
+            position: absolute;
+            left: 20px;
+            font-size: 10px;
+            color: var(--agent-dispatch);
+            font-family: monospace;
+        }
+        .command-line {
+            animation: typeCommand 1s steps(20) infinite;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+        }
+        .command-line:nth-child(1) { animation-delay: 0s; }
+        .command-line:nth-child(2) { animation-delay: 0.5s; }
+        .command-line:nth-child(3) { animation-delay: 1s; }
+        @keyframes typeCommand {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 100%; opacity: 0; }
+        }
+
+        /* 盾卫 - 守护工作 */
+        .illustration-risk {
+            background: linear-gradient(135deg, rgba(245, 63, 63, 0.1), rgba(245, 63, 63, 0.05));
+        }
+        .shield-guard {
+            width: 50px;
+            height: 60px;
+            border: 3px solid var(--agent-risk);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            animation: shieldPulse 2s ease-in-out infinite;
+        }
+        .shield-guard::before {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: var(--agent-risk);
+        }
+        @keyframes shieldPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 63, 63, 0.4); }
+            50% { box-shadow: 0 0 0 20px rgba(245, 63, 63, 0); }
+        }
+        .radar-scan {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px dashed rgba(245, 63, 63, 0.3);
+            border-radius: 50%;
+            animation: radarSpin 3s linear infinite;
+        }
+        @keyframes radarSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 书童 - 学习工作 */
+        .illustration-learning {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.05));
+        }
+        .book-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .book {
+            height: 8px;
+            background: var(--agent-learning);
+            border-radius: 2px;
+            animation: bookFloat 2s ease-in-out infinite;
+        }
+        .book:nth-child(1) { width: 40px; animation-delay: 0s; }
+        .book:nth-child(2) { width: 50px; animation-delay: 0.2s; }
+        .book:nth-child(3) { width: 45px; animation-delay: 0.4s; }
+        @keyframes bookFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .insight-bulb {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 24px;
+            animation: bulbGlow 1.5s ease-in-out infinite;
+        }
+        @keyframes bulbGlow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 10px var(--agent-learning)); }
+        }
+
+        .working-status {
+            position: absolute;
+            bottom: 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* Stats Grid */
+        .agent-stats-section {
+            margin-bottom: 20px;
+        }
+
+        .agent-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .agent-stat-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .agent-stat-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .agent-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .agent-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Work Report */
+        .agent-report-section {
+            margin-bottom: 20px;
+        }
+
+        .work-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            border-left: 3px solid var(--border);
+        }
+
+        .timeline-item.important {
+            border-left-color: var(--warning);
+            background: rgba(255, 125, 0, 0.05);
+        }
+
+        .timeline-item.success {
+            border-left-color: var(--success);
+            background: rgba(0, 180, 42, 0.05);
+        }
+
+        .timeline-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+            min-width: 40px;
+        }
+
+        .timeline-content {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .timeline-content strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Skills Section */
+        .agent-skills-section {
+            margin-bottom: 20px;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .skill-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            background: rgba(22, 93, 255, 0.15);
+        }
+
+        .skill-info { flex: 1; }
+        .skill-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .skill-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .skill-level {
+            display: flex;
+            gap: 3px;
+        }
+
+        .skill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .skill-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 4px var(--primary);
+        }
+
+        /* Top Header */
+        .top-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 24px; }
+        .platform-title { font-size: 18px; font-weight: 700; }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--success);
+            background: rgba(0, 180, 42, 0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .approval-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 63, 63, 0.15);
+            border: 1px solid rgba(245, 63, 63, 0.3);
+            color: var(--danger);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .approval-badge:hover {
+            background: rgba(245, 63, 63, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .approval-badge .count {
+            background: var(--danger);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .live-clock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .live-clock .time {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .main-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Section Title */
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title h2 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        /* Approval Cards Grid */
+        .approval-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .approval-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .approval-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .approval-card.urgent { border-left: 4px solid var(--warning); }
+        .approval-card.normal { border-left: 4px solid var(--primary); }
+        .approval-card.success { border-left: 4px solid var(--success); }
+        .approval-card.risk { border-left: 4px solid var(--danger); }
+
+        .approval-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .approval-type {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .approval-type.urgent { color: var(--warning); }
+        .approval-type.normal { color: var(--primary); }
+        .approval-type.risk { color: var(--danger); }
+
+        .approval-countdown {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--warning);
+            background: rgba(255, 125, 0, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .approval-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .approval-metrics {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .metric {
+            flex: 1;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .approval-reason {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: #104be0; }
+
+        .btn-secondary {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover { border-color: var(--border-light); }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        /* Agent Status Board */
+        .agent-board {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .agent-master-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .agent-master-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .agent-master-avatar {
+            width: 56px;
+            height: 56px;
+            position: relative;
+        }
+
+        .agent-master-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--agent-master);
+        }
+
+        .agent-master-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .agent-master-quote {
+            font-size: 12px;
+            color: var(--agent-master);
+            font-style: italic;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .agent-card-small {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .agent-card-small:hover { 
+            background: var(--bg-card-hover); 
+            transform: translateY(-2px);
+            border-color: var(--border-light);
+        }
+
+        .agent-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .agent-info { flex: 1; }
+        .agent-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .agent-role { font-size: 11px; color: var(--text-muted); }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .agent-status-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .agent-status-indicator.running { background: var(--success); animation: pulse 2s infinite; }
+        .agent-status-indicator.standby { background: var(--text-muted); }
+        .agent-status-indicator.busy { background: var(--warning); animation: pulse 1.5s infinite; }
+
+        .agent-task {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Bottom Grid */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .panel-body { padding: 16px; }
+
+        /* Market Monitor */
+        .market-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .market-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .market-info { display: flex; align-items: center; gap: 10px; }
+        .market-icon { font-size: 18px; }
+        .market-name { font-weight: 500; font-size: 13px; }
+        .market-status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .market-price { text-align: right; }
+        .market-price-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .market-price-value.up { color: var(--success); }
+        .market-price-value.down { color: var(--danger); }
+        .market-price-change { font-size: 11px; color: var(--text-muted); }
+
+        /* AI Work Log */
+        .log-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .log-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .log-content { flex: 1; line-height: 1.5; }
+        .log-content strong { color: var(--text-primary); font-weight: 500; }
+
+        /* AIBI Section */
+        .aibi-section {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 16px 20px;
+        }
+
+        .aibi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .aibi-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .aibi-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .aibi-content {
+            display: none;
+        }
+
+        .aibi-content.expanded {
+            display: block;
+        }
+
+        .aibi-input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .aibi-input {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .aibi-input:focus { border-color: var(--primary); }
+
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .quick-question {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-question:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* AIBI Result Panel */
+        .aibi-result {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .aibi-result.show { display: block; }
+
+        .aibi-result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .aibi-result-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(22, 93, 255, 0.2), rgba(6, 182, 212, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .aibi-result-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .aibi-result-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .aibi-skills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .skill-tag {
+            background: rgba(22, 93, 255, 0.1);
+            border: 1px solid rgba(22, 93, 255, 0.3);
+            color: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .aibi-chart-area {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Chart Styles */
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 160px;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .chart-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .chart-bar-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 130px;
+        }
+
+        .chart-bar {
+            width: 28px;
+            background: linear-gradient(180deg, #165DFF 0%, #06b6d4 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-bar.secondary {
+            background: linear-gradient(180deg, rgba(6, 182, 212, 0.8) 0%, rgba(6, 182, 212, 0.4) 100%);
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .chart-bar-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .chart-line-container {
+            height: 160px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .chart-line-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line-path {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease forwards;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .chart-area-path {
+            fill: rgba(22, 93, 255, 0.1);
+            stroke: none;
+        }
+
+        .chart-dot {
+            fill: var(--primary);
+            r: 4;
+            animation: popIn 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        .chart-dot:nth-child(1) { animation-delay: 0.5s; }
+        .chart-dot:nth-child(2) { animation-delay: 0.7s; }
+        .chart-dot:nth-child(3) { animation-delay: 0.9s; }
+        .chart-dot:nth-child(4) { animation-delay: 1.1s; }
+        .chart-dot:nth-child(5) { animation-delay: 1.3s; }
+
+        @keyframes popIn {
+            to { opacity: 1; r: 4; }
+        }
+
+        .chart-donut {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .chart-donut-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .chart-donut-circle {
+            fill: none;
+            stroke-width: 24;
+        }
+
+        .chart-donut-bg {
+            stroke: var(--bg-dark);
+        }
+
+        .chart-donut-segment {
+            stroke-dasharray: 0 377;
+            animation: fillDonut 1.5s ease forwards;
+        }
+
+        @keyframes fillDonut {
+            to { stroke-dasharray: var(--segment-length) 377; }
+        }
+
+        .chart-donut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .chart-donut-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .chart-donut-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .chart-prediction {
+            height: 160px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .prediction-bar {
+            position: absolute;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .prediction-historical {
+            background: rgba(6, 182, 212, 0.3);
+            border: 2px solid var(--agent-perception);
+            color: var(--agent-perception);
+        }
+
+        .prediction-forecast {
+            background: linear-gradient(90deg, rgba(22, 93, 255, 0.3), rgba(22, 93, 255, 0.6));
+            border: 2px dashed var(--primary);
+            color: var(--text-primary);
+            animation: pulsePrediction 2s infinite;
+        }
+
+        @keyframes pulsePrediction {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .prediction-label {
+            position: absolute;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .legend-dot.primary { background: var(--primary); }
+        .legend-dot.secondary { background: #06b6d4; }
+        .legend-dot.warning { background: var(--warning); }
+
+        .aibi-insights {
+            background: rgba(0, 180, 42, 0.05);
+            border: 1px solid rgba(0, 180, 42, 0.2);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .aibi-insights-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .aibi-insights-list {
+            font-size: 12px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .aibi-insights-list li {
+            margin-bottom: 8px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .aibi-insights-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        /* Loading Animation */
+        .aibi-loading {
+            display: none;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .aibi-loading.show { display: block; }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .loading-steps {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .loading-step {
+            padding: 4px 0;
+            opacity: 0.5;
+        }
+
+        .loading-step.active {
+            opacity: 1;
+            color: var(--primary-light);
+        }
+
+        .loading-step.completed {
+            opacity: 1;
+            color: var(--success);
+        }
+
+        .loading-step.completed::before {
+            content: '✓ ';
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 560px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 24px;
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.show .modal { transform: scale(1); }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .modal-title { font-size: 18px; font-weight: 700; }
+        .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-body { margin-bottom: 20px; }
+
+        .detail-section { margin-bottom: 20px; }
+        .detail-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: var(--bg-dark);
+            padding: 16px;
+            border-radius: 10px;
+        }
+
+        .detail-item { text-align: center; }
+        .detail-item-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+        .detail-item-label { font-size: 11px; color: var(--text-muted); }
+
+        .reasoning-chain {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .reasoning-step {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .reasoning-step:last-child { margin-bottom: 0; }
+        .reasoning-step::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 32px;
+            bottom: -16px;
+            width: 2px;
+            background: var(--border);
+        }
+        .reasoning-step:last-child::before { display: none; }
+
+        .reasoning-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .reasoning-icon.thought { background: rgba(139, 92, 246, 0.2); color: var(--agent-master); }
+        .reasoning-icon.action { background: rgba(22, 93, 255, 0.2); color: var(--primary); }
+        .reasoning-icon.observation { background: rgba(6, 182, 212, 0.2); color: var(--agent-perception); }
+
+        .reasoning-content { flex: 1; padding-top: 4px; }
+        .reasoning-type {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .reasoning-text { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .modal-footer .btn { flex: 1; padding: 12px; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            z-index: 3000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i { color: var(--success); font-size: 18px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand-icon">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h2 style="font-size:16px;font-weight:700;">VPP TradeGPT</h2>
+                        <span style="font-size:12px;color:var(--text-muted);">智能体工作台</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">工作台</div>
+                    <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                        <span class="icon"><i class="fa fa-dashboard"></i></span>
+                        <span>智能体工作台</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">AI智能体团队</div>
+                    
+                    <div class="nav-item" onclick="showAgentDetail('perception')">
+                        <div class="agent-avatar-wrapper">
+                            <div class="agent-avatar-svg agent-avatar-perception">
+                                <div class="scan-line"></div>
+                            </div>
+                            <span class="agent-status-dot running"></span>
+                        </div>
+                        <div>
+                            <div style="font-weight:500;font-size:13px;">鹰眼</div>
+                            <div style="font-size:11px;color:var(--text-muted);">市场感知</div>
+                        </div>
+                    </div>
+
+                    <div class="nav-item" onclick="showAgentDetail('trading')">
+                        <div class="agent-avatar-wrapper">
+                            <div class="agent-avatar-svg agent-avatar-trading"></div>
+                            <span class="agent-status-dot running"></span>
+                        </div>
+                        <div>
+                            <div style="font-weight:500;font-size:13px;">算盘</div>
+                            <div style="font-size:11px;color:var(--text-muted);">交易决策</div>
+                        </div>
+                    </div>
+
+                    <div class="nav-item" onclick="showAgentDetail('dispatch')">
+                        <div class="agent-avatar-wrapper">
+                            <div class="agent-avatar-svg agent-avatar-dispatch"></div>
+                            <span class="agent-status-dot standby"></span>
+                        </div>
+                        <div>
+                            <div style="font-weight:500;font-size:13px;">闪电</div>
+                            <div style="font-size:11px;color:var(--text-muted);">调度执行</div>
+                        </div>
+                    </div>
+
+                    <div class="nav-item" onclick="showAgentDetail('risk')">
+                        <div class="agent-avatar-wrapper">
+                            <div class="agent-avatar-svg agent-avatar-risk"></div>
+                            <span class="agent-status-dot running"></span>
+                        </div>
+                        <div>
+                            <div style="font-weight:500;font-size:13px;">盾卫</div>
+                            <div style="font-size:11px;color:var(--text-muted);">风险监控</div>
+                        </div>
+                    </div>
+
+                    <div class="nav-item" onclick="showAgentDetail('learning')">
+                        <div class="agent-avatar-wrapper">
+                            <div class="agent-avatar-svg agent-avatar-learning"></div>
+                            <span class="agent-status-dot standby"></span>
+                        </div>
+                        <div>
+                            <div style="font-weight:500;font-size:13px;">书童</div>
+                            <div style="font-size:11px;color:var(--text-muted);">复盘优化</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">功能模块</div>
+                    <a href="#" class="nav-item">
+                        <span class="icon"><i class="fa fa-exchange"></i></span>
+                        <span>交易大厅</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="icon"><i class="fa fa-android"></i></span>
+                        <span>智能体管理</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <div>
+                        <div class="user-name">交易员</div>
+                        <div class="user-role">晶科能源</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Agent Detail Drawer Overlay -->
+            <div class="agent-drawer-overlay" id="agentDrawerOverlay" onclick="hideAgentDetail()"></div>
+
+            <!-- Agent Detail Drawer -->
+            <div class="agent-drawer" id="agentDrawer">
+                <!-- Drawer Header -->
+                <div class="agent-drawer-header">
+                    <button class="agent-drawer-close" onclick="hideAgentDetail()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                    
+                    <div class="agent-profile-card">
+                        <div class="agent-profile-avatar perception" id="drawerAvatar">
+                            👁️
+                            <div class="agent-profile-status"></div>
+                        </div>
+                        <div class="agent-profile-info">
+                            <div class="agent-profile-name" id="drawerName">鹰眼</div>
+                            <div class="agent-profile-role" id="drawerRole">市场感知Agent · 7×24小时在线</div>
+                            <div class="agent-profile-badge">
+                                <span class="blink">●</span>
+                                <span>工作中</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="agent-profile-quote" id="drawerQuote">
+                        "洞察市场，捕捉先机"
+                    </div>
+                </div>
+
+                <!-- Drawer Content -->
+                <div class="agent-drawer-content">
+                    <!-- Working Animation -->
+                    <div class="agent-working-section">
+                        <div class="section-label">当前工作状态</div>
+                        <div class="agent-working-illustration illustration-perception" id="drawerIllustration">
+                            <div class="data-particles">
+                                <div class="particle" style="left:10%;animation-delay:0s;"></div>
+                                <div class="particle" style="left:30%;animation-delay:0.5s;"></div>
+                                <div class="particle" style="left:50%;animation-delay:1s;"></div>
+                                <div class="particle" style="left:70%;animation-delay:1.5s;"></div>
+                                <div class="particle" style="left:90%;animation-delay:0.3s;"></div>
+                            </div>
+                            <div class="eye-scanner">
+                                <div class="scan-beam"></div>
+                            </div>
+                            <div class="working-status" style="color:var(--agent-perception);">
+                                正在扫描市场数据...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="agent-stats-section">
+                        <div class="section-label">工作统计</div>
+                        <div class="agent-stats-grid" id="drawerStats">
+                            <div class="agent-stat-card">
+                                <div class="agent-stat-value" style="color:var(--agent-perception);">156</div>
+                                <div class="agent-stat-label">今日监测</div>
+                            </div>
+                            <div class="agent-stat-card">
+                                <div class="agent-stat-value" style="color:var(--agent-perception);">3</div>
+                                <div class="agent-stat-label">新邀约</div>
+                            </div>
+                            <div class="agent-stat-card">
+                                <div class="agent-stat-value" style="color:var(--agent-perception);">99.8%</div>
+                                <div class="agent-stat-label">抓取成功率</div>
+                            </div>
+                            <div class="agent-stat-card">
+                                <div class="agent-stat-value" style="color:var(--agent-perception);">0.3s</div>
+                                <div class="agent-stat-label">平均响应</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="agent-skills-section">
+                        <div class="section-label">掌握技能</div>
+                        <div class="skills-list" id="drawerSkills">
+                            <div class="skill-item">
+                                <div class="skill-icon">🔍</div>
+                                <div class="skill-info">
+                                    <div class="skill-name">市场监测</div>
+                                    <div class="skill-desc">实时抓取多平台交易信息</div>
+                                </div>
+                                <div class="skill-level">
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">📊</div>
+                                <div class="skill-info">
+                                    <div class="skill-name">数据解析</div>
+                                    <div class="skill-desc">自动解析邀约规则和价格</div>
+                                </div>
+                                <div class="skill-level">
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">⚡</div>
+                                <div class="skill-info">
+                                    <div class="skill-name">实时推送</div>
+                                    <div class="skill-desc">毫秒级信息推送能力</div>
+                                </div>
+                                <div class="skill-level">
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                    <div class="skill-dot active"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Work Report -->
+                    <div class="agent-report-section">
+                        <div class="section-label">今日工作日志</div>
+                        <div class="work-timeline" id="drawerTimeline">
+                            <div class="timeline-item">
+                                <div class="timeline-time">14:02</div>
+                                <div class="timeline-content">
+                                    监测到<strong>浙江削峰邀约</strong>发布，已推送给算盘
+                                </div>
+                            </div>
+                            <div class="timeline-item important">
+                                <div class="timeline-time">10:30</div>
+                                <div class="timeline-content">
+                                    发现<strong>山东现货价格波动</strong>，触发策略评估
+                                </div>
+                            </div>
+                            <div class="timeline-item success">
+                                <div class="timeline-time">09:00</div>
+                                <div class="timeline-content">
+                                    完成<strong>浙江调频市场</strong>监测，价格区间正常
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 class="platform-title">智能体工作台</h1>
+                    <div class="system-status">
+                        <span class="blink">●</span>
+                        <span>系统运行正常 · 5个智能体在线</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="approval-badge" onclick="scrollToApprovals()">
+                        <i class="fa fa-bell"></i>
+                        <span>AI待审批</span>
+                        <span class="count">3</span>
+                    </div>
+                    <div class="live-clock">
+                        <i class="fa fa-clock-o"></i>
+                        <span class="time" id="liveTime">14:05:32</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="main-panel" id="mainPanel">
+                    <!-- Section 1: AI待审批事项 -->
+                    <div class="section-title" id="approvalsSection">
+                        <h2>
+                            <span>🔴</span>
+                            AI待审批事项
+                            <span class="subtitle">AI已完成分析，等待您的决策</span>
+                        </h2>
+                        <span style="font-size:12px;color:var(--text-muted);">3个待处理</span>
+                    </div>
+
+                    <div class="approval-grid">
+                        <!-- Card 1: 削峰申报 -->
+                        <div class="approval-card urgent" onclick="showApprovalDetail('peak')">
+                            <div class="approval-header">
+                                <div class="approval-type urgent">
+                                    <i class="fa fa-fire"></i>
+                                    <span>削峰申报</span>
+                                </div>
+                                <div class="approval-countdown">剩余15分钟</div>
+                            </div>
+                            <div class="approval-title">浙江削峰申报确认</div>
+                            <div class="approval-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">8元</div>
+                                    <div class="metric-label">补偿价/kWh</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">500kW</div>
+                                    <div class="metric-label">建议申报</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">¥8,000</div>
+                                    <div class="metric-label">预期收益</div>
+                                </div>
+                            </div>
+                            <div class="approval-reason">
+                                💡 <strong>算盘</strong>建议：历史出清价7.5元，当前价格较优；储能SOC充足（78%）
+                            </div>
+                            <div class="approval-actions" onclick="event.stopPropagation()">
+                                <button class="btn btn-success" onclick="approveItem(this,'浙江削峰申报')">
+                                    <i class="fa fa-check"></i> 批准
+                                </button>
+                                <button class="btn btn-secondary" onclick="showApprovalDetail('peak')">
+                                    查看详情
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: 现货策略 -->
+                        <div class="approval-card normal" onclick="showApprovalDetail('spot')">
+                            <div class="approval-header">
+                                <div class="approval-type normal">
+                                    <i class="fa fa-bolt"></i>
+                                    <span>现货策略</span>
+                                </div>
+                            </div>
+                            <div class="approval-title">山东现货放电策略调整</div>
+                            <div class="approval-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">850</div>
+                                    <div class="metric-label">当前电价</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">1200</div>
+                                    <div class="metric-label">预测电价</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">+¥3,500</div>
+                                    <div class="metric-label">价差收益</div>
+                                </div>
+                            </div>
+                            <div class="approval-reason">
+                                ⚡ <strong>闪电</strong>建议：延迟放电2小时，18:00后价格预计上涨至1200元/MWh
+                            </div>
+                            <div class="approval-actions" onclick="event.stopPropagation()">
+                                <button class="btn btn-primary" onclick="approveItem(this,'山东现货策略调整')">
+                                    <i class="fa fa-check"></i> 确认调整
+                                </button>
+                                <button class="btn btn-secondary" onclick="showApprovalDetail('spot')">
+                                    查看依据
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: 风险预警 -->
+                        <div class="approval-card risk" onclick="showApprovalDetail('risk')">
+                            <div class="approval-header">
+                                <div class="approval-type risk">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <span>风险预警</span>
+                                </div>
+                            </div>
+                            <div class="approval-title">调频性能考核预警</div>
+                            <div class="approval-metrics">
+                                <div class="metric">
+                                    <div class="metric-value">85%</div>
+                                    <div class="metric-label">当前合格率</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">90%</div>
+                                    <div class="metric-label">考核阈值</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value" style="color:var(--danger)">高风险</div>
+                                    <div class="metric-label">风险等级</div>
+                                </div>
+                            </div>
+                            <div class="approval-reason">
+                                🛡️ <strong>盾卫</strong>提醒：#3储能单元响应延迟超标，建议检查设备状态
+                            </div>
+                            <div class="approval-actions" onclick="event.stopPropagation()">
+                                <button class="btn btn-secondary" onclick="showApprovalDetail('risk')">
+                                    查看详情
+                                </button>
+                                <button class="btn btn-danger" onclick="approveItem(this,'风险已确认')">
+                                    标记已处理
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: 智能体状态看板 -->
+                    <div class="section-title">
+                        <h2>
+                            <span>🤖</span>
+                            智能体协作状态
+                            <span class="subtitle">我的AI团队实时工作状态</span>
+                        </h2>
+                    </div>
+
+                    <div class="agent-board">
+                        <div class="agent-master-card">
+                            <div class="agent-master-info">
+                                <div class="agent-master-avatar">
+                                    <div class="agent-avatar-svg agent-avatar-master" style="width:56px;height:56px;"></div>
+                                </div>
+                                <div>
+                                    <div class="agent-master-title">小脑 · 中枢 Master Agent</div>
+                                    <div class="agent-master-subtitle">协调全局任务 · 3个任务队列</div>
+                                    <div class="agent-master-quote">"协调全局，运筹帷幄"</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--success);">
+                                <span class="blink">●</span>
+                                <span>运行中</span>
+                            </div>
+                        </div>
+
+                        <div class="agent-grid">
+                            <div class="agent-card-small" onclick="showAgentDetail('perception')">
+                                <div class="agent-card-header">
+                                    <div class="agent-avatar-wrapper" style="width:36px;height:36px;">
+                                        <div class="agent-avatar-svg agent-avatar-perception" style="width:36px;height:36px;font-size:16px;">
+                                            <div class="scan-line"></div>
+                                        </div>
+                                    </div>
+                                    <div class="agent-info">
+                                        <div class="agent-name">鹰眼</div>
+                                        <div class="agent-role">市场感知</div>
+                                    </div>
+                                </div>
+                                <div class="agent-status">
+                                    <span class="agent-status-indicator running"></span>
+                                    <span>运行中</span>
+                                </div>
+                                <div class="agent-task">正在监控浙江平台...</div>
+                            </div>
+
+                            <div class="agent-card-small" onclick="showAgentDetail('trading')">
+                                <div class="agent-card-header">
+                                    <div class="agent-avatar-wrapper" style="width:36px;height:36px;">
+                                        <div class="agent-avatar-svg agent-avatar-trading" style="width:36px;height:36px;font-size:16px;"></div>
+                                    </div>
+                                    <div class="agent-info">
+                                        <div class="agent-name">算盘</div>
+                                        <div class="agent-role">交易决策</div>
+                                    </div>
+                                </div>
+                                <div class="agent-status">
+                                    <span class="agent-status-indicator running"></span>
+                                    <span>计算中</span>
+                                </div>
+                                <div class="agent-task">计算削峰报价策略...</div>
+                            </div>
+
+                            <div class="agent-card-small" onclick="showAgentDetail('dispatch')">
+                                <div class="agent-card-header">
+                                    <div class="agent-avatar-wrapper" style="width:36px;height:36px;">
+                                        <div class="agent-avatar-svg agent-avatar-dispatch" style="width:36px;height:36px;font-size:16px;"></div>
+                                    </div>
+                                    <div class="agent-info">
+                                        <div class="agent-name">闪电</div>
+                                        <div class="agent-role">调度执行</div>
+                                    </div>
+                                </div>
+                                <div class="agent-status">
+                                    <span class="agent-status-indicator standby"></span>
+                                    <span>待机</span>
+                                </div>
+                                <div class="agent-task">等待审批指令</div>
+                            </div>
+
+                            <div class="agent-card-small" onclick="showAgentDetail('risk')">
+                                <div class="agent-card-header">
+                                    <div class="agent-avatar-wrapper" style="width:36px;height:36px;">
+                                        <div class="agent-avatar-svg agent-avatar-risk" style="width:36px;height:36px;font-size:16px;"></div>
+                                    </div>
+                                    <div class="agent-info">
+                                        <div class="agent-name">盾卫</div>
+                                        <div class="agent-role">风险监控</div>
+                                    </div>
+                                </div>
+                                <div class="agent-status">
+                                    <span class="agent-status-indicator running"></span>
+                                    <span>扫描中</span>
+                                </div>
+                                <div class="agent-task">扫描异常中...</div>
+                            </div>
+
+                            <div class="agent-card-small" onclick="showAgentDetail('learning')">
+                                <div class="agent-card-header">
+                                    <div class="agent-avatar-wrapper" style="width:36px;height:36px;">
+                                        <div class="agent-avatar-svg agent-avatar-learning" style="width:36px;height:36px;font-size:16px;"></div>
+                                    </div>
+                                    <div class="agent-info">
+                                        <div class="agent-name">书童</div>
+                                        <div class="agent-role">复盘优化</div>
+                                    </div>
+                                </div>
+                                <div class="agent-status">
+                                    <span class="agent-status-indicator standby"></span>
+                                    <span>待机</span>
+                                </div>
+                                <div class="agent-task">今日已复盘3次</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 & 4: Bottom Grid -->
+                    <div class="bottom-grid">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title">📊 市场实时监控</div>
+                                <span style="font-size:11px;color:var(--success);">● 实时更新</span>
+                            </div>
+                            <div class="panel-body">
+                                <div class="market-list">
+                                    <div class="market-item">
+                                        <div class="market-info">
+                                            <span class="market-icon">🔥</span>
+                                            <span class="market-name">浙江调峰</span>
+                                            <span class="market-status"></span>
+                                        </div>
+                                        <div class="market-price">
+                                            <div class="market-price-value">8.0 <span style="font-size:12px;color:var(--text-muted);">元/kWh</span></div>
+                                            <div class="market-price-change">削峰邀约进行中</div>
+                                        </div>
+                                    </div>
+                                    <div class="market-item">
+                                        <div class="market-info">
+                                            <span class="market-icon">⚡</span>
+                                            <span class="market-name">浙江调频</span>
+                                            <span class="market-status"></span>
+                                        </div>
+                                        <div class="market-price">
+                                            <div class="market-price-value">12.5 <span style="font-size:12px;color:var(--text-muted);">元/MW</span></div>
+                                            <div class="market-price-change">性能报价区间</div>
+                                        </div>
+                                    </div>
+                                    <div class="market-item">
+                                        <div class="market-info">
+                                            <span class="market-icon">📈</span>
+                                            <span class="market-name">山东现货</span>
+                                            <span class="market-status"></span>
+                                        </div>
+                                        <div class="market-price">
+                                            <div class="market-price-value up">850 <span style="font-size:12px;color:var(--text-muted);">元/MWh</span></div>
+                                            <div class="market-price-change" style="color:var(--success);">↑ 5.2% 较上时段</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title">📝 AI工作日志</div>
+                                <span style="font-size:11px;color:var(--text-muted);">最近5条</span>
+                            </div>
+                            <div class="panel-body">
+                                <div class="log-list">
+                                    <div class="log-item">
+                                        <span class="log-time">14:03</span>
+                                        <span class="log-icon" style="background:rgba(0,180,42,0.2);color:var(--agent-trading);">算</span>
+                                        <div class="log-content">
+                                            <strong>算盘</strong> 完成削峰报价计算，推送审批
+                                        </div>
+                                    </div>
+                                    <div class="log-item">
+                                        <span class="log-time">14:02</span>
+                                        <span class="log-icon" style="background:rgba(6,182,212,0.2);color:var(--agent-perception);">鹰</span>
+                                        <div class="log-content">
+                                            <strong>鹰眼</strong> 监测到浙江削峰邀约发布
+                                        </div>
+                                    </div>
+                                    <div class="log-item">
+                                        <span class="log-time">13:58</span>
+                                        <span class="log-icon" style="background:rgba(236,72,153,0.2);color:var(--agent-learning);">书</span>
+                                        <div class="log-content">
+                                            <strong>书童</strong> 完成昨日收益复盘，生成3条优化建议
+                                        </div>
+                                    </div>
+                                    <div class="log-item">
+                                        <span class="log-time">13:45</span>
+                                        <span class="log-icon" style="background:rgba(255,125,0,0.2);color:var(--agent-dispatch);">闪</span>
+                                        <div class="log-content">
+                                            <strong>闪电</strong> 山东现货调令执行成功，SOC调整至65%
+                                        </div>
+                                    </div>
+                                    <div class="log-item">
+                                        <span class="log-time">13:30</span>
+                                        <span class="log-icon" style="background:rgba(245,63,63,0.2);color:var(--agent-risk);">盾</span>
+                                        <div class="log-content">
+                                            <strong>盾卫</strong> 检测到#3储能响应延迟，已预警
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AIBI Section -->
+            <div class="aibi-section">
+                <div class="aibi-header">
+                    <div class="aibi-title">
+                        <span>💬</span>
+                        <span>AIBI 智能分析</span>
+                        <span style="font-size:12px;color:var(--text-muted);font-weight:normal;">- 输入问题，AI实时生成可视化分析</span>
+                    </div>
+                    <button class="aibi-toggle" onclick="toggleAIBI()">
+                        <span>展开</span>
+                        <i class="fa fa-chevron-down" id="aibiToggleIcon"></i>
+                    </button>
+                </div>
+                
+                <div class="aibi-content" id="aibiContent">
+                    <div class="aibi-input-area">
+                        <input type="text" class="aibi-input" placeholder="输入你的问题，例如：对比本周和上周收益，分析山东现货波动原因..." id="aibiInput">
+                        <button class="btn btn-primary" onclick="generateAIBI()">
+                            <i class="fa fa-paper-plane"></i> 分析
+                        </button>
+                    </div>
+                    
+                    <div class="quick-questions">
+                        <div class="quick-question" onclick="setAIBIQuestion('对比本周和上周收益')">📊 对比本周和上周收益</div>
+                        <div class="quick-question" onclick="setAIBIQuestion('分析山东现货波动原因')">📈 分析山东现货波动原因</div>
+                        <div class="quick-question" onclick="setAIBIQuestion('预测明天浙江削峰价格')">🔮 预测明天浙江削峰价格</div>
+                        <div class="quick-question" onclick="setAIBIQuestion('查看各设备收益贡献')">🔋 查看各设备收益贡献</div>
+                    </div>
+
+                    <!-- Loading Animation -->
+                    <div class="aibi-loading" id="aibiLoading">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">AI正在分析数据...</div>
+                        <div class="loading-steps">
+                            <div class="loading-step" id="step1">🧠 理解问题意图</div>
+                            <div class="loading-step" id="step2">📊 调用数据查询Skill</div>
+                            <div class="loading-step" id="step3">📈 生成可视化图表</div>
+                            <div class="loading-step" id="step4">💡 生成洞察建议</div>
+                        </div>
+                    </div>
+
+                    <!-- AIBI Result -->
+                    <div class="aibi-result" id="aibiResult">
+                        <div class="aibi-result-header">
+                            <div class="aibi-result-icon" id="resultIcon">📊</div>
+                            <div>
+                                <div class="aibi-result-title" id="resultTitle">收益对比分析：本周 vs 上周</div>
+                                <div class="aibi-result-subtitle">生成时间：14:05:32 · 耗时1.2秒 · 置信度95%</div>
+                            </div>
+                        </div>
+
+                        <div class="aibi-skills" id="resultSkills">
+                            <span class="skill-tag">📊 data_query_skill</span>
+                            <span class="skill-tag">📈 time_series_analysis</span>
+                            <span class="skill-tag">🎯 attribution_analysis</span>
+                            <span class="skill-tag">💡 insight_generation</span>
+                        </div>
+
+                        <!-- Dynamic Chart Area -->
+                        <div class="aibi-chart-area" id="chartArea">
+                            <!-- Chart will be injected here -->
+                        </div>
+
+                        <div class="aibi-insights" id="resultInsights">
+                            <div class="aibi-insights-title">
+                                <i class="fa fa-lightbulb-o"></i>
+                                AI洞察与建议
+                            </div>
+                            <ul class="aibi-insights-list" id="insightsList">
+                                <li>本周总收益<strong>64.9万元</strong>，较上周<strong>+22%</strong>，主要增长来自浙江削峰</li>
+                                <li>周三收益增长最明显（+36%），归因于当天出现高补偿价邀约</li>
+                                <li>建议：关注下周浙江削峰市场，保持高参与度</li>
+                            </ul>
+                        </div>
+
+                        <div style="display:flex;gap:10px;margin-top:16px;">
+                            <button class="btn btn-secondary btn-sm">
+                                <i class="fa fa-download"></i> 导出报告
+                            </button>
+                            <button class="btn btn-secondary btn-sm">
+                                <i class="fa fa-share"></i> 分享
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="hideAIBIResult()">
+                                <i class="fa fa-times"></i> 关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Approval Detail Modal -->
+    <div class="modal-overlay" id="approvalModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <div class="modal-icon" id="modalIcon" style="background:rgba(255,125,0,0.15);color:var(--warning);">🔥</div>
+                    <div>
+                        <div class="modal-title" id="modalTitle">浙江削峰申报确认</div>
+                        <div class="modal-subtitle" id="modalSubtitle">算盘 · 14:03 生成</div>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-section">
+                    <div class="detail-section-title">决策数据</div>
+                    <div class="detail-grid" id="modalMetrics">
+                        <div class="detail-item">
+                            <div class="detail-item-value">8.0</div>
+                            <div class="detail-item-label">补偿价(元/kWh)</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-value">500</div>
+                            <div class="detail-item-label">建议申报(kW)</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-item-value">¥8,000</div>
+                            <div class="detail-item-label">预期收益</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">AI推理过程 (ReAct链路)</div>
+                    <div class="reasoning-chain">
+                        <div class="reasoning-step">
+                            <div class="reasoning-icon thought">🧠</div>
+                            <div class="reasoning-content">
+                                <div class="reasoning-type">THOUGHT · 14:02:33</div>
+                                <div class="reasoning-text"><strong>鹰眼</strong>监测到浙江削峰邀约发布，<strong>小脑</strong>分配任务给<strong>算盘</strong>评估是否参与。</div>
+                            </div>
+                        </div>
+                        <div class="reasoning-step">
+                            <div class="reasoning-icon action">🔧</div>
+                            <div class="reasoning-content">
+                                <div class="reasoning-type">ACTION · 14:02:34</div>
+                                <div class="reasoning-text"><strong>算盘</strong>调用 query_market_data Skill 获取邀约详情：时长3h，预估价8元/kWh</div>
+                            </div>
+                        </div>
+                        <div class="reasoning-step">
+                            <div class="reasoning-icon observation">👁️</div>
+                            <div class="reasoning-content">
+                                <div class="reasoning-type">OBSERVATION · 14:02:35</div>
+                                <div class="reasoning-text">邀约信息：14:00-17:00，容量需求500MW。近30天均价7.5元，当前8元属于较高水平。</div>
+                            </div>
+                        </div>
+                        <div class="reasoning-step">
+                            <div class="reasoning-icon action">🔧</div>
+                            <div class="reasoning-content">
+                                <div class="reasoning-type">ACTION · 14:02:36</div>
+                                <div class="reasoning-text"><strong>算盘</strong>调用 get_device_status Skill 查询储能SOC状态</div>
+                            </div>
+                        </div>
+                        <div class="reasoning-step">
+                            <div class="reasoning-icon observation">👁️</div>
+                            <div class="reasoning-content">
+                                <div class="reasoning-type">OBSERVATION · 14:02:36</div>
+                                <div class="reasoning-text">当前SOC 78%，预计放电后降至45%，在安全范围内。<strong>算盘</strong>建议申报500kW。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">风险提示（盾卫提醒）</div>
+                    <div style="background:rgba(255,125,0,0.1);border:1px solid rgba(255,125,0,0.3);border-radius:8px;padding:12px;font-size:13px;color:var(--warning);">
+                        <i class="fa fa-exclamation-circle"></i>
+                        今日已申报2次削峰，注意储能循环次数。预计本次放电后，需2小时恢复至安全SOC。
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">稍后处理</button>
+                <button class="btn btn-success" onclick="approveFromModal()">
+                    <i class="fa fa-check"></i> 批准申报
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fa fa-check-circle"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <script>
+        // Real-time clock
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toTimeString().slice(0, 8);
+            document.getElementById('liveTime').textContent = timeStr;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // Agent Drawer Functions
+        function showAgentDetail(agentType) {
+            const overlay = document.getElementById('agentDrawerOverlay');
+            const drawer = document.getElementById('agentDrawer');
+            
+            const agentData = {
+                perception: {
+                    avatar: '👁️',
+                    avatarClass: 'perception',
+                    name: '鹰眼',
+                    role: '市场感知Agent · 7×24小时在线',
+                    quote: '"洞察市场，捕捉先机"',
+                    color: 'var(--agent-perception)',
+                    illustrationClass: 'illustration-perception',
+                    illustrationHTML: `
+                        <div class="data-particles">
+                            <div class="particle" style="left:10%;animation-delay:0s;"></div>
+                            <div class="particle" style="left:30%;animation-delay:0.5s;"></div>
+                            <div class="particle" style="left:50%;animation-delay:1s;"></div>
+                            <div class="particle" style="left:70%;animation-delay:1.5s;"></div>
+                            <div class="particle" style="left:90%;animation-delay:0.3s;"></div>
+                        </div>
+                        <div class="eye-scanner">
+                            <div class="scan-beam"></div>
+                        </div>
+                        <div class="working-status" style="color:var(--agent-perception);">
+                            正在扫描市场数据...
+                        </div>
+                    `,
+                    stats: [
+                        { value: '156', label: '今日监测' },
+                        { value: '3', label: '新邀约' },
+                        { value: '99.8%', label: '抓取成功率' },
+                        { value: '0.3s', label: '平均响应' }
+                    ],
+                    skills: [
+                        { icon: '🔍', name: '市场监测', desc: '实时抓取多平台交易信息', level: 5 },
+                        { icon: '📊', name: '数据解析', desc: '自动解析邀约规则和价格', level: 4 },
+                        { icon: '⚡', name: '实时推送', desc: '毫秒级信息推送能力', level: 5 }
+                    ],
+                    timeline: [
+                        { time: '14:02', content: '监测到<strong>浙江削峰邀约</strong>发布，已推送给算盘', type: '' },
+                        { time: '10:30', content: '发现<strong>山东现货价格波动</strong>，触发策略评估', type: 'important' },
+                        { time: '09:00', content: '完成<strong>浙江调频市场</strong>监测，价格区间正常', type: 'success' }
+                    ]
+                },
+                trading: {
+                    avatar: '🧮',
+                    avatarClass: 'trading',
+                    name: '算盘',
+                    role: '交易决策Agent · 智能报价专家',
+                    quote: '"精打细算，最优决策"',
+                    color: 'var(--agent-trading)',
+                    illustrationClass: 'illustration-trading',
+                    illustrationHTML: `
+                        <div class="abacus">
+                            <div class="abacus-row"><div class="abacus-bead"></div></div>
+                            <div class="abacus-row"><div class="abacus-bead"></div></div>
+                            <div class="abacus-row"><div class="abacus-bead"></div></div>
+                            <div class="abacus-row"><div class="abacus-bead"></div></div>
+                        </div>
+                        <div class="number-bubble" style="top:20px;right:40px;">¥8.0</div>
+                        <div class="number-bubble" style="top:50px;right:60px;animation-delay:0.3s;">500kW</div>
+                        <div class="number-bubble" style="top:80px;right:30px;animation-delay:0.6s;">+¥8K</div>
+                        <div class="working-status" style="color:var(--agent-trading);">
+                            正在计算最优报价...
+                        </div>
+                    `,
+                    stats: [
+                        { value: '12', label: '今日策略' },
+                        { value: '3', label: '待审批' },
+                        { value: '87%', label: '采纳率' },
+                        { value: '+¥45K', label: '今日收益' }
+                    ],
+                    skills: [
+                        { icon: '📈', name: '价格预测', desc: '基于历史数据预测价格走势', level: 5 },
+                        { icon: '🎯', name: '报价优化', desc: '多目标优化报价策略', level: 5 },
+                        { icon: '🔮', name: '风险评估', desc: '评估报价风险与收益', level: 4 }
+                    ],
+                    timeline: [
+                        { time: '14:03', content: '完成<strong>削峰报价</strong>计算，建议500kW', type: '' },
+                        { time: '11:20', content: '生成<strong>现货策略</strong>调整建议', type: 'important' },
+                        { time: '09:15', content: '完成<strong>调频报价</strong>策略，建议12.5元/MW', type: 'success' }
+                    ]
+                },
+                dispatch: {
+                    avatar: '⚡',
+                    avatarClass: 'dispatch',
+                    name: '闪电',
+                    role: '调度执行Agent · 极速响应',
+                    quote: '"雷厉风行，精准执行"',
+                    color: 'var(--agent-dispatch)',
+                    illustrationClass: 'illustration-dispatch',
+                    illustrationHTML: `
+                        <div class="lightning-bolt">⚡</div>
+                        <div class="command-lines" style="top:30px;">
+                            <div class="command-line">$ dispatch -s 500kW</div>
+                            <div class="command-line">$ adjust_soc --target 65%</div>
+                            <div class="command-line">$ verify_status OK</div>
+                        </div>
+                        <div class="working-status" style="color:var(--agent-dispatch);">
+                            等待执行指令...
+                        </div>
+                    `,
+                    stats: [
+                        { value: '8', label: '今日执行' },
+                        { value: '100%', label: '成功率' },
+                        { value: '0.5s', label: '平均响应' },
+                        { value: '0', label: '异常次数' }
+                    ],
+                    skills: [
+                        { icon: '⚡', name: '极速响应', desc: '毫秒级指令下发', level: 5 },
+                        { icon: '🔧', name: '设备控制', desc: '精准控制储能设备', level: 5 },
+                        { icon: '✓', name: '状态验证', desc: '执行结果双重验证', level: 4 }
+                    ],
+                    timeline: [
+                        { time: '13:45', content: '<strong>山东现货</strong>调令执行成功，SOC调整至65%', type: 'success' },
+                        { time: '11:30', content: '调整<strong>#1储能</strong>SOC至65%', type: '' },
+                        { time: '09:20', content: '执行<strong>浙江调频</strong>申报，EMS反馈成功', type: 'success' }
+                    ]
+                },
+                risk: {
+                    avatar: '🛡️',
+                    avatarClass: 'risk',
+                    name: '盾卫',
+                    role: '风险监控Agent · 全天候守护',
+                    quote: '"风控第一，守护底线"',
+                    color: 'var(--agent-risk)',
+                    illustrationClass: 'illustration-risk',
+                    illustrationHTML: `
+                        <div class="radar-scan"></div>
+                        <div class="shield-guard"></div>
+                        <div class="working-status" style="color:var(--agent-risk);">
+                            扫描异常中... 发现1个预警
+                        </div>
+                    `,
+                    stats: [
+                        { value: '1,256', label: '今日扫描' },
+                        { value: '1', label: '预警' },
+                        { value: '0', label: '高危风险' },
+                        { value: '100%', label: '覆盖率' }
+                    ],
+                    skills: [
+                        { icon: '🔍', name: '异常检测', desc: '实时检测交易异常', level: 5 },
+                        { icon: '⚠️', name: '风险预警', desc: '多级风险预警机制', level: 5 },
+                        { icon: '🛡️', name: '熔断保护', desc: '自动熔断异常交易', level: 4 }
+                    ],
+                    timeline: [
+                        { time: '13:30', content: '<span style="color:var(--danger);">【预警】</span>检测到<strong>#3储能</strong>响应延迟', type: 'important' },
+                        { time: '13:35', content: '调频<strong>合格率</strong>下降至85%', type: '' },
+                        { time: '持续', content: '实时监控各市场<strong>异常波动</strong>...', type: '' }
+                    ]
+                },
+                learning: {
+                    avatar: '📚',
+                    avatarClass: 'learning',
+                    name: '书童',
+                    role: '复盘优化Agent · 持续进化',
+                    quote: '"温故知新，持续进化"',
+                    color: 'var(--agent-learning)',
+                    illustrationClass: 'illustration-learning',
+                    illustrationHTML: `
+                        <div class="book-stack">
+                            <div class="book"></div>
+                            <div class="book"></div>
+                            <div class="book"></div>
+                        </div>
+                        <div class="insight-bulb">💡</div>
+                        <div class="working-status" style="color:var(--agent-learning);">
+                            正在分析历史数据...
+                        </div>
+                    `,
+                    stats: [
+                        { value: '3', label: '今日复盘' },
+                        { value: '5', label: '优化建议' },
+                        { value: '12%', label: '收益提升' },
+                        { value: '92%', label: '策略准确率' }
+                    ],
+                    skills: [
+                        { icon: '📊', name: '收益复盘', desc: '多维度收益分析', level: 5 },
+                        { icon: '🎯', name: '策略优化', desc: '基于数据优化策略', level: 4 },
+                        { icon: '🔮', name: '趋势预测', desc: '预测未来收益趋势', level: 4 }
+                    ],
+                    timeline: [
+                        { time: '昨日', content: '<strong>山东现货</strong>策略效果评估完成', type: '' },
+                        { time: '', content: '• 实际 vs 预测收益偏差：<strong>-3.2%</strong>', type: '' },
+                        { time: '', content: '• <span style="color:var(--success);">【建议】</span>延迟放电策略在17:00后效果更优', type: 'success' }
+                    ]
+                }
+            };
+
+            const data = agentData[agentType];
+            
+            // Update drawer content
+            document.getElementById('drawerAvatar').className = 'agent-profile-avatar ' + data.avatarClass;
+            document.getElementById('drawerAvatar').innerHTML = data.avatar + '<div class="agent-profile-status"></div>';
+            document.getElementById('drawerName').textContent = data.name;
+            document.getElementById('drawerName').style.color = data.color;
+            document.getElementById('drawerRole').textContent = data.role;
+            document.getElementById('drawerQuote').textContent = data.quote;
+            document.getElementById('drawerQuote').style.borderLeftColor = data.color;
+            
+            // Update illustration
+            const illustration = document.getElementById('drawerIllustration');
+            illustration.className = 'agent-working-illustration ' + data.illustrationClass;
+            illustration.innerHTML = data.illustrationHTML;
+            
+            // Update stats
+            document.getElementById('drawerStats').innerHTML = data.stats.map(s => `
+                <div class="agent-stat-card">
+                    <div class="agent-stat-value" style="color:${data.color};">${s.value}</div>
+                    <div class="agent-stat-label">${s.label}</div>
+                </div>
+            `).join('');
+            
+            // Update skills
+            document.getElementById('drawerSkills').innerHTML = data.skills.map(s => `
+                <div class="skill-item">
+                    <div class="skill-icon">${s.icon}</div>
+                    <div class="skill-info">
+                        <div class="skill-name">${s.name}</div>
+                        <div class="skill-desc">${s.desc}</div>
+                    </div>
+                    <div class="skill-level">
+                        ${Array(5).fill(0).map((_, i) => `
+                            <div class="skill-dot ${i < s.level ? 'active' : ''}"></div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Update timeline
+            document.getElementById('drawerTimeline').innerHTML = data.timeline.map(t => `
+                <div class="timeline-item ${t.type}">
+                    <div class="timeline-time">${t.time}</div>
+                    <div class="timeline-content">${t.content}</div>
+                </div>
+            `).join('');
+
+            // Show drawer
+            overlay.classList.add('show');
+            drawer.classList.add('show');
+        }
+
+        function hideAgentDetail() {
+            document.getElementById('agentDrawerOverlay').classList.remove('show');
+            document.getElementById('agentDrawer').classList.remove('show');
+        }
+
+        // Modal functions
+        function showApprovalDetail(type) {
+            const modal = document.getElementById('approvalModal');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const metrics = document.getElementById('modalMetrics');
+
+            if (type === 'peak') {
+                icon.style.background = 'rgba(255, 125, 0, 0.15)';
+                icon.style.color = 'var(--warning)';
+                icon.textContent = '🔥';
+                title.textContent = '浙江削峰申报确认';
+                subtitle.textContent = '算盘 · 14:03 生成';
+                metrics.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-item-value">8.0</div>
+                        <div class="detail-item-label">补偿价(元/kWh)</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value">500</div>
+                        <div class="detail-item-label">建议申报(kW)</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value">¥8,000</div>
+                        <div class="detail-item-label">预期收益</div>
+                    </div>
+                `;
+            } else if (type === 'spot') {
+                icon.style.background = 'rgba(22, 93, 255, 0.15)';
+                icon.style.color = 'var(--primary)';
+                icon.textContent = '⚡';
+                title.textContent = '山东现货策略调整';
+                subtitle.textContent = '闪电 · 13:45 生成';
+                metrics.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-item-value">850</div>
+                        <div class="detail-item-label">当前电价</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value">1200</div>
+                        <div class="detail-item-label">预测电价</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value">+¥3,500</div>
+                        <div class="detail-item-label">价差收益</div>
+                    </div>
+                `;
+            } else if (type === 'risk') {
+                icon.style.background = 'rgba(245, 63, 63, 0.15)';
+                icon.style.color = 'var(--danger)';
+                icon.textContent = '⚠️';
+                title.textContent = '调频性能考核预警';
+                subtitle.textContent = '盾卫 · 13:30 生成';
+                metrics.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-item-value">85%</div>
+                        <div class="detail-item-label">当前合格率</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value">90%</div>
+                        <div class="detail-item-label">考核阈值</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-value" style="color:var(--danger)">高风险</div>
+                        <div class="detail-item-label">风险等级</div>
+                    </div>
+                `;
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('approvalModal').classList.remove('show');
+        }
+
+        function approveFromModal() {
+            closeModal();
+            showToast('已批准申报，闪电开始执行');
+        }
+
+        // Toast function
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Approval actions
+        function approveItem(btn, itemName) {
+            event.stopPropagation();
+            btn.innerHTML = '<i class="fa fa-check"></i> 已批准';
+            btn.classList.remove('btn-success', 'btn-primary');
+            btn.classList.add('btn-secondary');
+            btn.disabled = true;
+            showToast(itemName + '已批准，AI开始执行');
+        }
+
+        // Scroll to approvals
+        function scrollToApprovals() {
+            document.getElementById('approvalsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // AIBI toggle
+        function toggleAIBI() {
+            const content = document.getElementById('aibiContent');
+            const icon = document.getElementById('aibiToggleIcon');
+            const text = document.querySelector('.aibi-toggle span');
+
+            content.classList.toggle('expanded');
+            if (content.classList.contains('expanded')) {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                text.textContent = '收起';
+            } else {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                text.textContent = '展开';
+            }
+        }
+
+        function setAIBIQuestion(question) {
+            document.getElementById('aibiInput').value = question;
+        }
+
+        // Chart Templates
+        const chartTemplates = {
+            comparison: `
+                <div class="chart-title">收益对比（万元）</div>
+                <div class="chart-bars">
+                    <div class="chart-bar-group">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar secondary" style="height:70%;"><span class="chart-bar-value">10.5</span></div>
+                            <div class="chart-bar" style="height:85%;"><span class="chart-bar-value">12.8</span></div>
+                        </div>
+                        <div class="chart-bar-label">周一</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar secondary" style="height:65%;"><span class="chart-bar-value">9.8</span></div>
+                            <div class="chart-bar" style="height:90%;"><span class="chart-bar-value">13.5</span></div>
+                        </div>
+                        <div class="chart-bar-label">周二</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar secondary" style="height:55%;"><span class="chart-bar-value">8.2</span></div>
+                            <div class="chart-bar" style="height:75%;"><span class="chart-bar-value">11.2</span></div>
+                        </div>
+                        <div class="chart-bar-label">周三</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar secondary" style="height:80%;"><span class="chart-bar-value">12.0</span></div>
+                            <div class="chart-bar" style="height:95%;"><span class="chart-bar-value">14.2</span></div>
+                        </div>
+                        <div class="chart-bar-label">周四</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar secondary" style="height:60%;"><span class="chart-bar-value">9.0</span></div>
+                            <div class="chart-bar" style="height:88%;"><span class="chart-bar-value">13.2</span></div>
+                        </div>
+                        <div class="chart-bar-label">周五</div>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot secondary"></div><span>上周</span></div>
+                    <div class="legend-item"><div class="legend-dot primary"></div><span>本周</span></div>
+                </div>
+            `,
+            trend: `
+                <div class="chart-title">山东现货价格波动趋势（元/MWh）</div>
+                <div class="chart-line-container">
+                    <svg class="chart-line-svg" viewBox="0 0 400 150" preserveAspectRatio="none">
+                        <path class="chart-area-path" d="M0,120 Q50,100 100,110 T200,80 T300,100 T400,30 L400,150 L0,150 Z"></path>
+                        <path class="chart-line-path" d="M0,120 Q50,100 100,110 T200,80 T300,100 T400,30"></path>
+                        <circle class="chart-dot" cx="0" cy="120"></circle>
+                        <circle class="chart-dot" cx="100" cy="110"></circle>
+                        <circle class="chart-dot" cx="200" cy="80"></circle>
+                        <circle class="chart-dot" cx="300" cy="100"></circle>
+                        <circle class="chart-dot" cx="400" cy="30"></circle>
+                    </svg>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot primary"></div><span>实际价格</span></div>
+                </div>
+            `,
+            distribution: `
+                <div class="chart-title">各设备收益贡献占比</div>
+                <div class="chart-donut">
+                    <svg class="chart-donut-svg" viewBox="0 0 100 100">
+                        <circle class="chart-donut-circle chart-donut-bg" cx="50" cy="50" r="40"></circle>
+                        <circle class="chart-donut-circle chart-donut-segment" cx="50" cy="50" r="40" 
+                            stroke="#165DFF" stroke-dasharray="95 377" style="--segment-length:95;"></circle>
+                        <circle class="chart-donut-circle chart-donut-segment" cx="50" cy="50" r="40" 
+                            stroke="#06b6d4" stroke-dasharray="75 377" stroke-dashoffset="-95" style="--segment-length:75;"></circle>
+                        <circle class="chart-donut-circle chart-donut-segment" cx="50" cy="50" r="40" 
+                            stroke="#00B42A" stroke-dasharray="60 377" stroke-dashoffset="-170" style="--segment-length:60;"></circle>
+                        <circle class="chart-donut-circle chart-donut-segment" cx="50" cy="50" r="40" 
+                            stroke="#FF7D00" stroke-dasharray="40 377" stroke-dashoffset="-230" style="--segment-length:40;"></circle>
+                    </svg>
+                    <div class="chart-donut-center">
+                        <div class="chart-donut-value">¥64.9万</div>
+                        <div class="chart-donut-label">总收益</div>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot primary"></div><span>#1储能 45%</span></div>
+                    <div class="legend-item"><div class="legend-dot secondary"></div><span>#2储能 28%</span></div>
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--success);"></div><span>#3储能 18%</span></div>
+                    <div class="legend-item"><div class="legend-dot warning"></div><span>其他 9%</span></div>
+                </div>
+            `,
+            prediction: `
+                <div class="chart-title">浙江削峰价格预测（元/kWh）</div>
+                <div class="chart-prediction">
+                    <div class="prediction-bar prediction-historical" style="top:20px;left:20px;width:45%;height:36px;">
+                        历史均价 7.5
+                    </div>
+                    <div class="prediction-label" style="top:60px;left:20px;">过去30天</div>
+                    
+                    <div class="prediction-bar prediction-forecast" style="top:70px;left:50%;width:40%;height:36px;">
+                        预测 7.8-8.2
+                    </div>
+                    <div class="prediction-label" style="top:110px;left:50%;">明日预测区间</div>
+                    
+                    <div style="position:absolute;bottom:10px;left:20px;font-size:11px;color:var(--text-muted);">
+                        基于历史数据+天气因素+供需预测
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-dot secondary"></div><span>历史数据</span></div>
+                    <div class="legend-item"><div class="legend-dot primary"></div><span>AI预测</span></div>
+                </div>
+            `
+        };
+
+        // Generate AIBI
+        function generateAIBI() {
+            const input = document.getElementById('aibiInput').value;
+            if (!input) {
+                showToast('请输入分析问题');
+                return;
+            }
+
+            const loading = document.getElementById('aibiLoading');
+            const result = document.getElementById('aibiResult');
+            const chartArea = document.getElementById('chartArea');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultSkills = document.getElementById('resultSkills');
+            const insightsList = document.getElementById('insightsList');
+
+            // Show loading
+            loading.classList.add('show');
+            result.classList.remove('show');
+
+            // Animate steps
+            setTimeout(() => document.getElementById('step1').classList.add('completed'), 500);
+            setTimeout(() => document.getElementById('step2').classList.add('completed'), 1200);
+            setTimeout(() => document.getElementById('step3').classList.add('completed'), 2000);
+            setTimeout(() => {
+                document.getElementById('step4').classList.add('completed');
+                
+                // Hide loading and show result
+                loading.classList.remove('show');
+                result.classList.add('show');
+
+                // Determine chart type based on input
+                if (input.includes('对比') || input.includes('收益')) {
+                    chartArea.innerHTML = chartTemplates.comparison;
+                    resultTitle.textContent = '收益对比分析：本周 vs 上周';
+                    resultIcon.textContent = '📊';
+                    resultSkills.innerHTML = `
+                        <span class="skill-tag">📊 data_query_skill</span>
+                        <span class="skill-tag">📈 time_series_analysis</span>
+                        <span class="skill-tag">🎯 attribution_analysis</span>
+                        <span class="skill-tag">💡 insight_generation</span>
+                    `;
+                    insightsList.innerHTML = `
+                        <li>本周总收益<strong>64.9万元</strong>，较上周<strong>+22%</strong>，主要增长来自浙江削峰</li>
+                        <li>周三收益增长最明显（+36%），归因于当天出现高补偿价邀约</li>
+                        <li>建议：关注下周浙江削峰市场，保持高参与度</li>
+                    `;
+                } else if (input.includes('波动') || input.includes('趋势')) {
+                    chartArea.innerHTML = chartTemplates.trend;
+                    resultTitle.textContent = '山东现货价格波动分析';
+                    resultIcon.textContent = '📈';
+                    resultSkills.innerHTML = `
+                        <span class="skill-tag">📊 data_query_skill</span>
+                        <span class="skill-tag">📈 volatility_analysis</span>
+                        <span class="skill-tag">🌤️ weather_correlation</span>
+                    `;
+                    insightsList.innerHTML = `
+                        <li>今日山东现货价格波动率<strong>15.3%</strong>，高于近30日均值10.2%</li>
+                        <li>波动主要原因是午后用电高峰导致供需紧张</li>
+                        <li>建议：关注18:00-20:00时段，可能有更高价格</li>
+                    `;
+                } else if (input.includes('设备') || input.includes('贡献')) {
+                    chartArea.innerHTML = chartTemplates.distribution;
+                    resultTitle.textContent = '各储能设备收益贡献分析';
+                    resultIcon.textContent = '🔋';
+                    resultSkills.innerHTML = `
+                        <span class="skill-tag">📊 revenue_attribution_skill</span>
+                        <span class="skill-tag">🎯 device_performance</span>
+                    `;
+                    insightsList.innerHTML = `
+                        <li><strong>#1储能</strong>贡献最大（45%），主要得益于高可用性</li>
+                        <li><strong>#2储能</strong>贡献28%，略低于预期，建议检查响应速度</li>
+                        <li>整体设备利用率82%，有提升空间</li>
+                    `;
+                } else if (input.includes('预测') || input.includes('价格')) {
+                    chartArea.innerHTML = chartTemplates.prediction;
+                    resultTitle.textContent = '浙江削峰价格预测';
+                    resultIcon.textContent = '🔮';
+                    resultSkills.innerHTML = `
+                        <span class="skill-tag">🔮 price_forecast_skill</span>
+                        <span class="skill-tag">📊 regression_model</span>
+                        <span class="skill-tag">🌤️ weather_data</span>
+                    `;
+                    insightsList.innerHTML = `
+                        <li>预测明日削峰补偿价区间<strong>7.8-8.2元/kWh</strong>，置信度85%</li>
+                        <li>基于：历史出清价+天气预报+负荷预测</li>
+                        <li>建议：若发布，可积极申报500-800kW</li>
+                    `;
+                } else {
+                    chartArea.innerHTML = chartTemplates.comparison;
+                    resultTitle.textContent = '智能分析结果';
+                    resultIcon.textContent = '💡';
+                }
+            }, 3000);
+        }
+
+        function hideAIBIResult() {
+            document.getElementById('aibiResult').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

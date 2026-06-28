@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课题一：数据中心机房巡检与AI应用调研报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); }
+        .section-divider { height: 4px; background: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); border-radius: 2px; }
+        .status-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .status-high { background: #fef2f2; color: #dc2626; }
+        .status-medium { background: #fffbeb; color: #d97706; }
+        .status-low { background: #f0fdf4; color: #16a34a; }
+        .status-info { background: #eff6ff; color: #2563eb; }
+        .toc-link { transition: all 0.2s; }
+        .toc-link:hover { padding-left: 8px; color: #3b82f6; }
+        .print-break { page-break-before: always; }
+        @media print { .no-print { display: none; } }
+        .mermaid { background: white; border-radius: 12px; padding: 16px; }
+        .flowchart-card { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        .infra-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+        .quote-box { border-left: 4px solid #3b82f6; background: #f8fafc; padding: 1rem 1.25rem; font-style: italic; color: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- 封面 -->
+    <div class="gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-amber-400 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+        <div class="relative z-10 text-center text-white px-8 max-w-4xl">
+            <div class="mb-6">
+                <span class="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium tracking-wider border border-white/20">
+                    <i class="fas fa-server mr-2"></i>现场巡检 + AI应用调研
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight">
+                课题一<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-emerald-300 to-amber-300">数据中心机房巡检与AI应用</span>
+            </h1>
+            <p class="text-xl text-blue-100 mb-10 font-light">T3+级数据中心全流程设施巡检 · AI安全落地方案 · 运维数据结构合成</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-blue-300 text-sm mb-1"><i class="fas fa-calendar-alt mr-2"></i>调研日期</div>
+                    <div class="text-2xl font-bold">2026年6月2日</div>
+                    <div class="text-blue-200 text-sm">09:47 - 11:28</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-emerald-300 text-sm mb-1"><i class="fas fa-clock mr-2"></i>巡检时长</div>
+                    <div class="text-2xl font-bold">1小时41分钟</div>
+                    <div class="text-emerald-200 text-sm">九号楼全流程巡检</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
+                    <div class="text-amber-300 text-sm mb-1"><i class="fas fa-users mr-2"></i>参与人员</div>
+                    <div class="text-2xl font-bold">约4人</div>
+                    <div class="text-amber-200 text-sm">运维楼长 + 总部技术人员</div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-sm animate-bounce">
+            <i class="fas fa-chevron-down"></i> 向下滚动阅读
+        </div>
+    </div>
+
+    <!-- 目录 -->
+    <div class="bg-white border-b sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="font-bold text-slate-700"><i class="fas fa-list-ul mr-2 text-blue-600"></i>报告目录</div>
+                <div class="hidden lg:flex gap-5 text-sm">
+                    <a href="#executive-summary" class="toc-link text-slate-600 hover:text-blue-600">执行摘要</a>
+                    <a href="#infra-arch" class="toc-link text-slate-600 hover:text-blue-600">基础设施架构</a>
+                    <a href="#ops-flow" class="toc-link text-slate-600 hover:text-blue-600">运维数据流</a>
+                    <a href="#ai-landing" class="toc-link text-slate-600 hover:text-blue-600">AI落地方案</a>
+                    <a href="#findings" class="toc-link text-slate-600 hover:text-blue-600">现场发现</a>
+                    <a href="#action-plan" class="toc-link text-slate-600 hover:text-blue-600">行动计划</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- 执行摘要 -->
+        <section id="executive-summary" class="bg-white rounded-2xl shadow-lg p-8 md:p-10 border-l-4 border-blue-600">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                    <i class="fas fa-file-alt text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">执行摘要</h2>
+            </div>
+            
+            <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-blue-600">T3+</div>
+                        <div class="text-sm text-slate-500">数据中心等级</div>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-emerald-600">2N</div>
+                        <div class="text-sm text-slate-500">冗余架构</div>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-amber-600">~2-3亿</div>
+                        <div class="text-sm text-slate-500">建设投入(元)</div>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg">
+                        <div class="text-3xl font-black text-purple-600">4套</div>
+                        <div class="text-sm text-slate-500">安全落地方案</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prose max-w-none text-slate-600 leading-relaxed space-y-4">
+                <p><strong class="text-slate-800">【调研概述】</strong>本次调研完成了对快手站点T3+级数据中心九号楼的全流程设施巡检，覆盖ECC动环大屏、高低压配电、制冷系统、UPS电池、柴油发电机、消防系统六大核心模块，并深入交流了AI应用在数据中心运维场景的安全落地方案。</p>
+                
+                <p><strong class="text-slate-800">【核心结论】</strong>（1）<strong>基础设施</strong>：九号楼采用2N架构（A/B双路进线互为备用），配备PLC自动切换+纯机械手动备份的双重冗余，但UPS铅酸电池5年衰减超50%且厂家经营困难无法及时更换，存在单点故障风险；（2）<strong>数据流转</strong>：现场运维数据流为"动环系统→ECC大屏/智航平台→巡检手机"，智航因多环节传输存在明显延迟，现场更信赖动环原生前端；（3）<strong>AI落地</strong>：园区AI推进节奏慢于华东一/二，付饶要求先整理多维数据再推AI；给出4套安全方案（内网Minimax/脚本改造/Docker云函数/空闲服务器部署），推荐"定时脚本+Docker云函数"作为最优路径；（4）<strong>巡检数字化</strong>：当前巡检依赖扫码签到+人工核对数值，智航平台按预设路线推送四次日巡检任务，但楼长反映"网不好"时现场数据与平台不一致。</p>
+                
+                <p><strong class="text-slate-800">【推荐行动】</strong>① 推动UPS电池备件采购，建立深度放电检测基线，校准厂家虚标备电时间；② 在空闲服务器部署Docker云函数，实现定时数据拉取自动化；③ 申请万物大模型token，将code body模型切换为内网Minimax消除泄密风险；④ 优化智航平台巡检模块的网络弱网容灾能力，增加离线缓存+同步机制；⑤ 将场景识别AI技能从个人电脑迁移至服务器并配置公网访问，供全园区使用。</p>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 基础设施架构 -->
+        <section id="infra-arch" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                    <i class="fas fa-sitemap text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">一、数据中心基础设施架构</h2>
+                    <p class="text-slate-500 text-sm">九号楼T3+级设施全流程 · 现场运维数据结构合成</p>
+                </div>
+            </div>
+
+            <!-- 整体架构图 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-project-diagram text-blue-600"></i>1.1 数据中心整体架构（2N冗余）</h3>
+                <div class="mermaid mb-4">
+graph TB
+    subgraph 外部供电["外部供电层"]
+        A[供电局10KV高压]
+    end
+    
+    subgraph 九号楼配电["九号楼配电层（园区总上级）"]
+        B[高压配电柜]
+        C[金箱柜]
+        D[PT计量]
+        E[馈线柜]
+        A --> B --> C --> D
+        C --> E
+    end
+    
+    subgraph A路进线["A路进线"]
+        F[A路高压柜]
+        G[A路变压器 10KV→400V]
+        H[A路UPS]
+        I[A路低压馈线]
+    end
+    
+    subgraph B路进线["B路进线（备用）"]
+        J[B路高压柜]
+        K[B路变压器 10KV→400V]
+        L[B路UPS]
+        M[B路低压馈线]
+    end
+    
+    subgraph 柴发备份["柴发备份层"]
+        N[柴油发电机<br/>卡特彼勒30L<br/>单台300万+]
+        O[油罐西门]
+    end
+    
+    subgraph 下游楼栋["下游楼栋供电"]
+        P[六号楼]
+        Q[七号楼]
+        R[其他楼栋]
+    end
+    
+    E --> F --> G --> H --> I
+    E --> J --> K --> L --> M
+    N --> B
+    O -.-> N
+    I --> P
+    I --> Q
+    I --> R
+    M -.-> P
+    M -.-> Q
+    M -.-> R
+    
+    style A路进线 fill:#dbeafe
+    style B路进线 fill:#dcfce7
+    style 柴发备份 fill:#fef3c7
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    <div class="p-3 bg-blue-50 rounded-lg"><strong>A路进线：</strong>主用供电路径，经变压器降压至400V后供UPS及低压设备</div>
+                    <div class="p-3 bg-emerald-50 rounded-lg"><strong>B路进线：</strong>备用供电路径，A路掉电时B路自动投入（PLC控制）</div>
+                    <div class="p-3 bg-amber-50 rounded-lg"><strong>柴发备份：</strong>双路市电均故障时，柴发自动启动为高压柜供电</div>
+                </div>
+            </div>
+
+            <!-- 配电控制流程 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-bolt text-amber-600"></i>1.2 配电自动控制与手动备份流程</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <div class="font-bold text-slate-800 mb-2">PLC自动控制流程</div>
+                        <div class="mermaid">
+flowchart TD
+    A[主PLC控制柜<br/>运行状态监控] --> B{A路进线<br/>是否正常?}
+    B -->|是| C[维持A路供电]
+    B -->|否| D[自动切换指令]
+    D --> E[备用PLC<br/> identical程序]
+    E --> F[投入B路进线]
+    F --> G[通过通信线<br/>同步状态]
+    G --> H[恢复供电]
+    
+    style A fill:#dbeafe
+    style E fill:#dcfce7
+    style H fill:#fef3c7
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800 mb-2">纯机械手动备份</div>
+                        <div class="mermaid">
+flowchart TD
+    A[断电/PLC故障] --> B[人工操作]
+    B --> C[取出摇把]
+    C --> D[插入机械操作孔]
+    D --> E[压缩弹簧7-8下]
+    E --> F[弹簧储能完成]
+    F --> G[手动分合闸]
+    G --> H[恢复供电]
+    
+    style A fill:#fee2e2
+    style H fill:#dcfce7
+                        </div>
+                        <div class="mt-2 quote-box rounded-lg text-sm">
+                            "这些都是几百年的智慧了……纯机械的备用方法，断电时通过摇把压缩弹簧完成分合闸"<br>
+                            <span class="text-xs text-slate-400">—— 现场楼长讲解，00:43:33</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 制冷系统流程 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-snowflake text-cyan-600"></i>1.3 制冷系统数据流与免费制冷模式</h3>
+                <div class="mermaid mb-4">
+graph LR
+    subgraph 夏季制冷["夏季标准制冷模式"]
+        A1[冷冻水回水<br/>热量高] --> B1[蒸发器]
+        B1 --> C1[制冷剂吸热汽化]
+        C1 --> D1[压缩机升压]
+        D1 --> E1[冷凝器]
+        E1 --> F1[冷却水带走热量]
+        F1 --> G1[冷却塔散热]
+        G1 --> H1[冷却水回流]
+        H1 --> E1
+        I1[冷冻水供水<br/>热量低] --> J1[机房空调]
+        J1 --> A1
+        B1 --> I1
+    end
+    
+    subgraph 冬季免费["冬季免费制冷模式"]
+        A2[外界低温冷却水] --> B2[板式换热器]
+        C2[冷冻水回水] --> B2
+        B2 --> D2[间接换热<br/>不接触]
+        D2 --> E2[冷冻水降温]
+        E2 --> F2[供机房空调]
+        F2 --> C2
+        G2[省却压缩机耗电] -.-> H2[免费制冷]
+    end
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-3 bg-cyan-50 rounded-lg">
+                        <strong>板式换热器设计：</strong>冷却水与冷冻水不直接接触，通过钢板间接换热，避免冷却水藻类细菌污染冷冻水
+                    </div>
+                    <div class="p-3 bg-amber-50 rounded-lg">
+                        <strong>柳絮清理要求：</strong>北方春季柳絮多，冷却塔过滤网<strong>每天清扫三遍</strong>，避免堵塞影响散热
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPS与电池系统 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-car-battery text-yellow-600"></i>1.4 UPS电池系统：数据监测与衰减现状</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <div class="font-bold text-slate-800 mb-2">UPS供电架构</div>
+                        <div class="mermaid">
+flowchart TD
+    A[市电输入] --> B[UPS整流逆变]
+    B --> C[稳定电源输出]
+    C --> D[机房IT设备]
+    E[电池组] -.->|市电故障| B
+    F[空调ATS切换] --> G[主用UPS电]
+    F --> H[备用市电直供]
+    
+    style E fill:#fef3c7
+    style B fill:#dbeafe
+                        </div>
+                        <div class="mt-2 text-sm text-slate-600">
+                            华为模块化UPS支持<strong>热插拔</strong>，模块损坏直接拔出更换，1-2分钟恢复业务，无需停机
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800 mb-2">单节电池监测数据结构</div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <table class="w-full text-sm">
+                                <thead class="bg-slate-100">
+                                    <tr><th class="p-2 text-left">监测指标</th><th class="p-2 text-left">采集方式</th><th class="p-2 text-left">上传路径</th></tr>
+                                </thead>
+                                <tbody class="divide-y">
+                                    <tr><td class="p-2">单节电压</td><td class="p-2">监测模块</td><td class="p-2">模块→电池服务器→动环</td></tr>
+                                    <tr><td class="p-2">单节温度</td><td class="p-2">监测模块</td><td class="p-2">模块→电池服务器→动环</td></tr>
+                                    <tr><td class="p-2">单节内阻</td><td class="p-2">监测模块</td><td class="p-2">模块→电池服务器→动环</td></tr>
+                                    <tr><td class="p-2">整组电压</td><td class="p-2">汇总计算</td><td class="p-2">电池服务器→动环</td></tr>
+                                    <tr><td class="p-2">整组温度</td><td class="p-2">汇总计算</td><td class="p-2">电池服务器→动环</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                            <i class="fas fa-exclamation-triangle mr-1"></i><strong>严重风险：</strong>铅酸电池5年后备电衰减超50%，厂家经营困难无法及时更换；厂家标称备电时间按浮充电压计算，实际放电时间远低于标称值
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 消防系统 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-fire-extinguisher text-red-500"></i>1.5 消防系统：双模式设计与响应流程</h3>
+                <div class="mermaid mb-4">
+flowchart TD
+    subgraph 核心区["机房核心区"]
+        A[烟感/温感报警] --> B{确认火灾?}
+        B -->|是| C[气体灭火系统启动]
+        C --> D[延时20-30秒]
+        D --> E[声光报警疏散人员]
+        E --> F[释放灭火气体]
+        F --> G[扑灭火灾]
+    end
+    
+    subgraph 非核心区["走廊/办公区"]
+        H[烟感报警] --> I{确认火灾?}
+        I -->|是| J[预作用水消防启动]
+        J --> K[泄气阀打开]
+        K --> L[管道充水]
+        L --> M[喷头喷水灭火]
+    end
+    
+    style C fill:#fee2e2
+    style J fill:#dbeafe
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-3 bg-red-50 rounded-lg">
+                        <strong>气体灭火（核心区）：</strong>释放前延时20-30秒确保人员疏散，灭火后无残留水渍，保护IT设备
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-lg">
+                        <strong>预作用水消防（非核心区）：</strong>正常状态管道充气压不进水，火灾确认后才充水，避免误喷漏水损坏设备
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 运维数据流 -->
+        <section id="ops-flow" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-exchange-alt text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">二、现场运维数据结构合成</h2>
+                    <p class="text-slate-500 text-sm">数据流向分析 · 巡检流程数字化 · 系统间同步关系</p>
+                </div>
+            </div>
+
+            <!-- 数据总线 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-network-wired text-emerald-600"></i>2.1 运维数据总线：动环系统为核心源</h3>
+                <div class="mermaid mb-4">
+graph TB
+    subgraph 数据源层["数据源层（现场设备）"]
+        A1[高压配电柜<br/>电量仪/东宝]
+        A2[变压器<br/>温度/负载]
+        A3[UPS模块<br/>电压/电流]
+        A4[电池监测模块<br/>电压/温度/内阻]
+        A5[冷水机组<br/>压力/温差]
+        A6[冷却塔<br/>风扇状态]
+        A7[空调<br/>温湿度/漏水绳]
+        A8[柴发<br/>油位/运行状态]
+    end
+    
+    subgraph 采集层["采集层（动环系统）"]
+        B[动环BA系统<br/>实时采集所有点位]
+    end
+    
+    subgraph 消费层["数据消费层"]
+        C1[ECC大屏<br/>动环原生投屏]
+        C2[智航平台<br/>动环同步+延迟]
+        C3[数字孪生<br/>智航二次同步]
+        C4[巡检手机<br/>智航APP]
+        C5[电池服务器<br/>独立汇聚]
+    end
+    
+    A1 --> B
+    A2 --> B
+    A3 --> B
+    A4 --> B
+    A5 --> B
+    A6 --> B
+    A7 --> B
+    A8 --> B
+    B --> C1
+    B --> C2
+    B --> C5
+    C2 --> C3
+    C2 --> C4
+    
+    style B fill:#dbeafe
+    style C1 fill:#dcfce7
+    style C2 fill:#fef3c7
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+                    <i class="fas fa-info-circle mr-2"></i><strong>关键发现：</strong>ECC大屏数据直接来自动环系统，信息最全面；智航平台数据经动环同步后再传输，存在<strong>明显延迟</strong>；数字孪生又经智航二次同步，延迟更大。现场楼长更信赖ECC大屏的实时性。
+                </div>
+            </div>
+
+            <!-- 巡检流程 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-clipboard-check text-blue-600"></i>2.2 日常巡检流程数字化拆解</h3>
+                <div class="mermaid mb-4">
+flowchart LR
+    subgraph 出发前["出发前"]
+        A[智航平台推送<br/>当日巡检任务] --> B[按预设路线排序<br/>最优路径]
+    end
+    
+    subgraph 到达现场["到达现场"]
+        C[扫门口二维码<br/>签到定位] --> D[进入设备机房]
+        D --> E[核对设备状态]
+        E --> F{有无报警?}
+        F -->|有| G[记录报警信息<br/>拍照留证]
+        F -->|无| H[核对数值正常]
+    end
+    
+    subgraph 数据比对["数据比对"]
+        I[查看设备本地读数] --> J[对比智航APP数据]
+        J --> K{数据一致?}
+        K -->|是| L[点击"通过"<br/>下一设备]
+        K -->|否| M[标记异常<br/>上报楼长]
+    end
+    
+    subgraph 巡检完成["巡检完成"]
+        N[所有设备通过] --> O[提交巡检报告]
+        O --> P[智航平台归档]
+    end
+    
+    B --> C
+    H --> I
+    G --> I
+    L --> Q{还有设备?}
+    Q -->|是| C
+    Q -->|否| N
+    M --> Q
+    
+    style A fill:#dbeafe
+    style C fill:#dcfce7
+    style K fill:#fef3c7
+    style N fill:#dbeafe
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    <div class="p-3 bg-blue-50 rounded-lg"><strong>每日四次巡检：</strong>白班按智航推送顺序执行，覆盖所有核心设备房间</div>
+                    <div class="p-3 bg-amber-50 rounded-lg"><strong>网络弱网问题：</strong>部分机房（如高压配电室）信号差，无法实时同步数据</div>
+                    <div class="p-3 bg-emerald-50 rounded-lg"><strong>最优路线：</strong>交付前预先设定，覆盖全部设备且不走重复路，约1-1.5小时完成</div>
+                </div>
+            </div>
+
+            <!-- 数字孪生数据流 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-clone text-purple-600"></i>2.3 数字孪生数据同步链路</h3>
+                <div class="mermaid">
+sequenceDiagram
+    participant 设备 as 现场设备
+    participant 动环 as 动环系统
+    participant 智航 as 智航平台
+    participant 孪生 as 数字孪生
+    participant 巡检 as 巡检手机
+    
+    设备->>动环: 实时采集数据
+    动环->>智航: 同步传输（有延迟）
+    智航->>孪生: 二次同步（更大延迟）
+    智航->>巡检: 推送巡检任务+设备数据
+    巡检->>智航: 回传巡检结果
+    
+    Note over 动航,孪生: 旧工具：手动拖拽配置每个设备点位变色<br/>新工具：支持从CMD自动拉取数据
+                </div>
+                <div class="mt-3 p-3 bg-purple-50 text-purple-800 rounded-lg text-sm">
+                    <i class="fas fa-lightbulb mr-2"></i><strong>改进方向：</strong>新采购的绘图工具支持从CMD自动拉取数据，新接入设备将使用新工具绘制，有望解决旧工具"逐个网点配置变色"的低效问题。
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- AI落地方案 -->
+        <section id="ai-landing" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                    <i class="fas fa-robot text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">三、AI应用安全落地方案</h2>
+                    <p class="text-slate-500 text-sm">4套方案对比 · 推荐路径 · 现场部署流程</p>
+                </div>
+            </div>
+
+            <!-- 方案对比 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-shield-alt text-purple-600"></i>3.1 数据安全方案对比矩阵</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-700">
+                                <th class="text-left p-3 rounded-tl-lg">方案</th>
+                                <th class="text-left p-3">技术路径</th>
+                                <th class="text-left p-3">安全等级</th>
+                                <th class="text-left p-3">实施难度</th>
+                                <th class="text-left p-3">成本</th>
+                                <th class="text-left p-3 rounded-tr-lg">推荐度</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">A. 内网大模型</td>
+                                <td class="p-3 text-slate-600">切换为私域部署的智万物Minimax，数据全程走公司内网</td>
+                                <td class="p-3"><span class="status-tag status-low">⭐⭐⭐⭐⭐</span></td>
+                                <td class="p-3">低</td>
+                                <td class="p-3">免费（申请token）</td>
+                                <td class="p-3"><span class="font-bold text-emerald-600">强烈推荐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">B. 脚本改造</td>
+                                <td class="p-3 text-slate-600">让大模型编写连接动环脚本，替换原有账号密码</td>
+                                <td class="p-3"><span class="status-tag status-medium">⭐⭐⭐⭐</span></td>
+                                <td class="p-3">中高</td>
+                                <td class="p-3">开发人力</td>
+                                <td class="p-3"><span class="font-bold text-blue-600">推荐</span></td>
+                            </tr>
+                            <tr class="bg-emerald-50">
+                                <td class="p-3 font-medium">C. 定时脚本+Docker ⭐</td>
+                                <td class="p-3 text-slate-600">code body生成定时脚本→Docker打包为云函数→服务器部署</td>
+                                <td class="p-3"><span class="status-tag status-low">⭐⭐⭐⭐⭐</span></td>
+                                <td class="p-3">中</td>
+                                <td class="p-3">服务器资源</td>
+                                <td class="p-3"><span class="font-bold text-emerald-600">最优推荐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">D. 空闲服务器部署</td>
+                                <td class="p-3 text-slate-600">在无敏感业务服务器部署cxl，配置端口转发与公网访问</td>
+                                <td class="p-3"><span class="status-tag status-medium">⭐⭐⭐⭐</span></td>
+                                <td class="p-3">中</td>
+                                <td class="p-3">服务器资源</td>
+                                <td class="p-3"><span class="font-bold text-blue-600">推荐</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50">
+                                <td class="p-3 font-medium">E. 外部大模型直连</td>
+                                <td class="p-3 text-slate-600">直接调用ChatGPT/Claude分析纵横通数据</td>
+                                <td class="p-3"><span class="status-tag status-high">⭐⭐</span></td>
+                                <td class="p-3">低</td>
+                                <td class="p-3">$100/月</td>
+                                <td class="p-3"><span class="font-bold text-red-600">不推荐</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 推荐方案部署流程 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-rocket text-emerald-600"></i>3.2 推荐方案C部署流程：定时脚本+Docker云函数</h3>
+                <div class="mermaid mb-4">
+flowchart TD
+    subgraph 开发阶段["开发阶段（本地）"]
+        A[明确数据拉取范围<br/>特点/字段/频率] --> B[code body生成<br/>定时脚本代码]
+        B --> C[本地测试脚本<br/>验证数据准确性]
+    end
+    
+    subgraph 打包阶段["打包阶段"]
+        D[编写Dockerfile] --> E[构建Docker镜像]
+        E --> F[打包为云函数格式]
+    end
+    
+    subgraph 部署阶段["部署阶段（服务器）"]
+        G[联系上下架工程师<br/>安装操作系统] --> H[服务器配置<br/>端口转发+防火墙]
+        H --> I[部署Docker容器]
+        I --> J[配置公网访问<br/>NAT转发]
+    end
+    
+    subgraph 运行阶段["运行阶段"]
+        K[定时任务触发] --> L[拉取动环/纵横通数据]
+        L --> M[数据处理分析]
+        M --> N[推送结果<br/>飞书群/邮件]
+    end
+    
+    C --> D
+    F --> G
+    J --> K
+    
+    style 开发阶段 fill:#dbeafe
+    style 打包阶段 fill:#fef3c7
+    style 部署阶段 fill:#dcfce7
+    style 运行阶段 fill:#f3e8ff
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-3 bg-emerald-50 rounded-lg text-sm">
+                        <strong>优势：</strong>服务器负载小（仅运行轻量脚本），安全性高（不部署code body本体，无高权限风险），可定时自动化执行
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-lg text-sm">
+                        <strong>注意事项：</strong>服务器必须无敏感业务数据，部署前需确认不影响客户业务，AI可自动完成大部分部署操作
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI技能发布流程 -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-code-branch text-blue-600"></i>3.3 AI技能从开发到发布的全流程</h3>
+                <div class="mermaid">
+flowchart LR
+    A[个人本地开发<br/>场景识别/UQR带出] --> B[周会演示<br/>经理审核功能]
+    B --> C{审核通过?}
+    C -->|否| D[打磨优化]
+    D --> A
+    C -->|是| E[选择部署方式]
+    E --> F1[方案A: 本地电脑<br/>仅自己可用]
+    E --> F2[方案B: 服务器部署<br/>公网访问]
+    E --> F3[方案C: 发布到平台<br/>全公司可用]
+    F2 --> G[联系上下架工程师<br/>安装系统+配置网络]
+    G --> H[AI自动部署<br/>生成公网链接]
+    F3 --> I[正式发布<br/>全区域共享]
+    
+    style F2 fill:#dbeafe
+    style F3 fill:#dcfce7
+                </div>
+                <div class="mt-3 p-3 bg-amber-50 text-amber-800 rounded-lg text-sm">
+                    <i class="fas fa-info-circle mr-2"></i><strong>当前瓶颈：</strong>多数AI技能部署在个人电脑，其他人无法访问；公司要求"人手一个智能体"但缺乏共享机制。建议优先将楼长开发的<strong>场景识别技能</strong>（设备故障自动识别+UQR带出）迁移至服务器供全园区使用。
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 现场发现 -->
+        <section id="findings" class="space-y-8 print-break">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                    <i class="fas fa-search text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">四、现场关键发现</h2>
+                    <p class="text-slate-500 text-sm">巡检实录 · 问题清单 · 经验沉淀</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-exclamation-triangle text-red-500"></i>高风险问题</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                            <div>
+                                <div class="font-medium text-slate-800">UPS电池严重衰减</div>
+                                <div class="text-sm text-slate-600">5年衰减超50%，厂家经营困难无法更换，已采购但还在生产线</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                            <div>
+                                <div class="font-medium text-slate-800">消防人员不足</div>
+                                <div class="text-sm text-slate-600">全园区仅罗工一个消防专家，还兼顾监控中心等其他工作</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                            <div>
+                                <div class="font-medium text-slate-800">电池氢气风险</div>
+                                <div class="text-sm text-slate-600">铅酸电池产生氢气，虽有探测器但电池间通风需持续关注</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-wrench text-amber-500"></i>运维痛点</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                            <div>
+                                <div class="font-medium text-slate-800">智航平台延迟</div>
+                                <div class="text-sm text-slate-600">动环→智航→数字孪生多级传输，数据延迟明显，现场更信赖ECC大屏</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                            <div>
+                                <div class="font-medium text-slate-800">网络弱网问题</div>
+                                <div class="text-sm text-slate-600">高压配电室等区域信号差，巡检时无法实时同步数据到智航</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg">
+                            <span class="flex-shrink-0 w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                            <div>
+                                <div class="font-medium text-slate-800">数字孪生工具低效</div>
+                                <div class="text-sm text-slate-600">旧工具需逐个设备手动配置点位变色，体验差，新工具尚未全面替换</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-gem text-emerald-600"></i>优秀实践沉淀</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-emerald-50 rounded-lg p-4">
+                        <div class="font-bold text-emerald-800 mb-2">巡检路线优化</div>
+                        <div class="text-sm text-emerald-700">交付前预设最优路线，覆盖所有重要设备且不走重复路，智航平台按此路线推送四次日巡检</div>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-4">
+                        <div class="font-bold text-emerald-800 mb-2">二维码设备管理</div>
+                        <div class="text-sm text-emerald-700">每个设备张贴二维码，扫码即可查看设备信息、巡检历史、维护记录</div>
+                    </div>
+                    <div class="bg-emerald-50 rounded-lg p-4">
+                        <div class="font-bold text-emerald-800 mb-2">双备份设计理念</div>
+                        <div class="text-sm text-emerald-700">从供电（A/B路）到控制（PLC主备）到机械（手动摇把）三层冗余，确保任何单点故障可恢复</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- 行动计划 -->
+        <section id="action-plan" class="space-y-8 print-break">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
+                    <i class="fas fa-calendar-check text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">五、行动计划</h2>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 p-5 bg-red-50 rounded-xl border-l-4 border-red-500">
+                        <div class="flex-shrink-0 w-20 text-center">
+                            <div class="text-2xl font-black text-red-600">P0</div>
+                            <div class="text-xs text-red-500">1周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-lg mb-1">推动UPS电池备件到货与深度放电检测</div>
+                            <div class="text-sm text-slate-600 mb-2">催促厂家完成已采购电池生产交付；建立每半年深度放电检测机制，校准厂家虚标备电时间，形成真实备电时间基线。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-5 bg-amber-50 rounded-xl border-l-4 border-amber-500">
+                        <div class="flex-shrink-0 w-20 text-center">
+                            <div class="text-2xl font-black text-amber-600">P1</div>
+                            <div class="text-xs text-amber-500">2周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-lg mb-1">空闲服务器Docker云函数部署</div>
+                            <div class="text-sm text-slate-600 mb-2">联系上下架工程师安装操作系统，将定时数据拉取脚本打包为Docker云函数部署，实现自动化运行，解决"电脑关机就停"问题。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-5 bg-amber-50 rounded-xl border-l-4 border-amber-500">
+                        <div class="flex-shrink-0 w-20 text-center">
+                            <div class="text-2xl font-black text-amber-600">P1</div>
+                            <div class="text-xs text-amber-500">2周</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-lg mb-1">申请万物大模型token并切换模型</div>
+                            <div class="text-sm text-slate-600 mb-2">找系统支撑部小微同学填写申请表单，获取Minimax使用额度；将code body模型从外部切换为内网Minimax，消除数据泄密风险。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-5 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                        <div class="flex-shrink-0 w-20 text-center">
+                            <div class="text-2xl font-black text-blue-600">P2</div>
+                            <div class="text-xs text-blue-500">1月</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-lg mb-1">场景识别AI技能服务器迁移</div>
+                            <div class="text-sm text-slate-600 mb-2">将楼长本地运行的"设备故障场景识别+UQR带出"技能迁移至服务器，配置公网访问，供全园区疾控和运维团队使用。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-5 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                        <div class="flex-shrink-0 w-20 text-center">
+                            <div class="text-2xl font-black text-blue-600">P2</div>
+                            <div class="text-xs text-blue-500">1月</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-lg mb-1">智航巡检模块弱网容灾优化</div>
+                            <div class="text-sm text-slate-600 mb-2">增加离线缓存机制，网络恢复后自动同步数据；优化高压配电室等弱网区域的本地数据存储与延迟上报能力。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-server text-2xl"></i>
+                        <h3 class="font-bold text-xl">基础设施结论</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-blue-100">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>2N架构+PLC自动切换+机械手动三层冗余，T3+标准执行到位</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>动环系统为数据核心源，ECC大屏实时性最佳，智航存在多级延迟</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>UPS电池衰减和厂家供货是最大单点风险，需建立真实备电基线</span></li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fas fa-robot text-2xl"></i>
+                        <h3 class="font-bold text-xl">AI应用结论</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-purple-100">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>"定时脚本+Docker云函数"是最优安全落地路径，兼顾低负载与高安全</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>内网Minimax切换可消除泄密顾虑，免费申请即可使用</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle mt-0.5"></i><span>场景识别技能有实际价值，从个人电脑迁移至服务器是推广关键</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 附录 -->
+        <section class="bg-white rounded-xl shadow-md p-6 print-break">
+            <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-paperclip text-slate-500"></i>附录</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">数据来源</h4>
+                    <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• Get笔记会议录音完整转写文本</li>
+                        <li>• 会议主题：数据中心机房巡检交流与AI应用讨论</li>
+                        <li>• 录音时间：2026年6月2日 09:47:40 ~ 11:28:57</li>
+                        <li>• 转写文本长度：36,390字符（完整未截断）</li>
+                        <li>• 巡检对象：快手站点九号楼（T3+级，4层）</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">术语表</h4>
+                    <ul class="text-sm text-slate-600 space-y-1">
+                        <li>• <strong>2N架构</strong>：双系统冗余，任意单系统故障不影响运行</li>
+                        <li>• <strong>ECC</strong>：企业总控中心（Enterprise Command Center）</li>
+                        <li>• <strong>PLC</strong>：可编程逻辑控制器</li>
+                        <li>• <strong>ATS</strong>：自动转换开关（Auto Transfer Switch）</li>
+                        <li>• <strong>UQR</strong>：快速响应指南（Quick Response）</li>
+                        <li>• <strong>code body</strong>：AI编程助手工具</li>
+                        <li>• <strong>cxl</strong>：可能是某种部署框架/工具</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t text-xs text-slate-400 text-center">
+                本报告基于36,390字符完整语音转写文本深度分析 · 含5张Mermaid流程图 · 生成时间：2026-06-02
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+            sequence: { useMaxWidth: true }
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo 03 - Hermes 场景告警完整链路</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .scenario-selector {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .scenario-selector select {
+      width: 100%;
+    }
+
+    .scenario-description {
+      background: rgba(30, 58, 138, 0.3);
+      border: 1px solid rgba(30, 58, 138, 0.5);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .scenario-description strong {
+      color: var(--accent-orange);
+    }
+
+    .flow-chain {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .flow-stage {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .stage-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(30, 58, 138, 0.4);
+      border: 2px solid rgba(6, 182, 212, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      transition: all 0.4s ease;
+    }
+
+    .stage-icon.active {
+      background: linear-gradient(135deg, var(--accent-orange), rgba(249, 115, 22, 0.8));
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
+      animation: stage-glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes stage-glow {
+      0%, 100% {
+        box-shadow: 0 0 25px rgba(249, 115, 22, 0.6);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(249, 115, 22, 0.9);
+      }
+    }
+
+    .stage-content {
+      flex: 1;
+      margin-left: 16px;
+    }
+
+    .stage-title {
+      font-weight: 600;
+      color: #f0f9ff;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .stage-desc {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .stage-connector {
+      position: absolute;
+      left: 25px;
+      top: 50px;
+      width: 2px;
+      height: 30px;
+      background: rgba(6, 182, 212, 0.2);
+      z-index: 1;
+    }
+
+    .stage-connector.active {
+      background: linear-gradient(to bottom, transparent, var(--accent-orange), transparent);
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+      animation: connector-flow 2s linear infinite;
+    }
+
+    @keyframes connector-flow {
+      0% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.3;
+      }
+    }
+
+    .notification-stack {
+      position: relative;
+      min-height: 300px;
+    }
+
+    .notification-card {
+      position: absolute;
+      right: 0;
+      background: linear-gradient(135deg, rgba(30, 42, 66, 0.95), rgba(15, 20, 25, 0.95));
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 300px;
+      max-width: 320px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      animation: notification-slide 0.5s ease-out;
+    }
+
+    @keyframes notification-slide {
+      from {
+        transform: translateX(40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .notification-card.feishu {
+      border-color: rgba(6, 182, 212, 0.3);
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.6), rgba(6, 182, 212, 0.2));
+    }
+
+    .notification-card.openclaw {
+      border-color: rgba(249, 115, 22, 0.3);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(249, 115, 22, 0.05));
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .notification-header .icon {
+      font-size: 16px;
+    }
+
+    .notification-feishu .notification-header {
+      color: var(--accent-cyan);
+    }
+
+    .notification-openclaw .notification-header {
+      color: var(--accent-orange);
+    }
+
+    .notification-body {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .notification-badge {
+      display: inline-block;
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 11px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .notification-badge.critical {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+    }
+
+    .notification-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notification-actions .btn {
+      flex: 1;
+      padding: 8px;
+      font-size: 11px;
+    }
+
+    .status-board {
+      background: rgba(30, 42, 66, 0.4);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      margin-top: 16px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+      font-size: 13px;
+    }
+
+    .status-row:last-child {
+      border-bottom: none;
+    }
+
+    .status-label {
+      color: #94a3b8;
+    }
+
+    .status-value {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      font-family: 'Monaco', 'Courier New', monospace;
+    }
+
+    .status-value.success {
+      color: var(--accent-green);
+    }
+
+    .status-value.error {
+      color: var(--accent-red);
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1>🚨 Hermes 场景告警完整链路</h1>
+      <p>展示多场景触发 + Skill 执行 + 通知推送的端到端流程 | 左：场景触发 | 中：流程执行 | 右：通知弹出</p>
+    </div>
+
+    <div class="demo-content">
+      <!-- 左侧：场景选择器 -->
+      <div class="demo-section">
+        <h2 style="margin-bottom: 16px; color: #f0f9ff;">告警场景</h2>
+
+        <div class="scenario-selector">
+          <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; font-weight: 500;">
+            选择场景
+          </label>
+          <select id="scenarioSelect" onchange="selectScenario()">
+            <option value="cooling">冷却系统故障</option>
+            <option value="power">电源不稳定</option>
+            <option value="fire">火灾预警</option>
+            <option value="network">网络中断</option>
+          </select>
+        </div>
+
+        <div class="scenario-description" id="scenarioDesc">
+          <strong>冷却系统故障:</strong><br>
+          机房冷却系统异常，温度超过阈值，需要立即启动应急制冷并通知运维团队进行紧急处理。
+        </div>
+
+        <div class="card">
+          <div style="font-weight: 600; color: var(--accent-orange); margin-bottom: 12px;">
+            📊 触发条件
+          </div>
+          <div id="triggerConditions" style="font-size: 13px; color: #cbd5e1; line-height: 1.8;">
+            <div>• 温度 > 40°C 持续 5 分钟</div>
+            <div>• 制冷风扇转速 < 30% 且持续下降</div>
+            <div>• 冷却液温度异常上升</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="triggerScenario()" style="width: 100%; margin-top: 16px;">
+          🔔 触发告警
+        </button>
+      </div>
+
+      <!-- 中央：流程执行链 -->
+      <div class="demo-section">
+        <h2 style="margin-bottom: 16px; color: #f0f9ff;">执行链路</h2>
+
+        <div class="flow-chain">
+          <!-- Stage 1: 告警检测 -->
+          <div class="flow-stage">
+            <div class="stage-icon" id="stage-1">🔍</div>
+            <div class="stage-content">
+              <div class="stage-title">告警检测</div>
+              <div class="stage-desc">规则匹配 → 触发条件验证</div>
+            </div>
+            <div class="stage-connector" id="connector-1"></div>
+          </div>
+
+          <!-- Stage 2: 智能分类 -->
+          <div class="flow-stage">
+            <div class="stage-icon" id="stage-2">⚙️</div>
+            <div class="stage-content">
+              <div class="stage-title">智能分类</div>
+              <div class="stage-desc">问题类型识别 + 严重程度评估</div>
+            </div>
+            <div class="stage-connector" id="connector-2"></div>
+          </div>
+
+          <!-- Stage 3: Skill 调用 -->
+          <div class="flow-stage">
+            <div class="stage-icon" id="stage-3">⚡</div>
+            <div class="stage-content">
+              <div class="stage-title">Skill 调用</div>
+              <div class="stage-desc">执行对应的自动化应对脚本</div>
+            </div>
+            <div class="stage-connector" id="connector-3"></div>
+          </div>
+
+          <!-- Stage 4: 通知推送 -->
+          <div class="flow-stage">
+            <div class="stage-icon" id="stage-4">📢</div>
+            <div class="stage-content">
+              <div class="stage-title">通知推送</div>
+              <div class="stage-desc">多渠道告知相关人员</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-board">
+          <div class="status-row">
+            <div class="status-label">场景状态</div>
+            <div class="status-value" id="scenarioStatus">就绪</div>
+          </div>
+          <div class="status-row">
+            <div class="status-label">执行进度</div>
+            <div class="status-value" id="executionProgress">0%</div>
+          </div>
+          <div class="status-row">
+            <div class="status-label">技能状态</div>
+            <div class="status-value" id="skillStatus">等待中</div>
+          </div>
+          <div class="status-row">
+            <div class="status-label">通知计数</div>
+            <div class="status-value" id="notificationCount">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：通知卡片栈 -->
+      <div class="demo-section">
+        <h2 style="margin-bottom: 16px; color: #f0f9ff;">通知推送</h2>
+
+        <div class="notification-stack" id="notificationStack">
+          <div style="text-align: center; color: #64748b; padding: 40px 20px; font-size: 13px;">
+            👀 触发告警后，通知卡片将显示在此
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = {
+      cooling: {
+        name: '冷却系统故障',
+        desc: '机房冷却系统异常，温度超过阈值，需要立即启动应急制冷并通知运维团队进行紧急处理。',
+        triggers: ['温度 > 40°C 持续 5 分钟', '制冷风扇转速 < 30% 且持续下降', '冷却液温度异常上升'],
+        skill: '启动应急制冷',
+        severity: 'critical',
+        notifications: [
+          {
+            type: 'feishu',
+            title: '🔴 紧急告警 - 冷却系统故障',
+            body: '<span class="notification-badge critical">CRITICAL</span><br>机房 A 冷却系统异常，当前温度 42.5°C，已自动启动应急制冷。请立即前往机房进行现场检查。',
+            actions: ['查看详情', '确认处理']
+          },
+          {
+            type: 'openclaw',
+            title: '🔨 工单系统 - 自动派单',
+            body: '<span class="notification-badge">工单 #2847</span><br>级别: 紧急<br>类型: 硬件故障<br>已分配给值班运维，预计到场时间 15 分钟。',
+            actions: ['接收', '转派']
+          }
+        ]
+      },
+      power: {
+        name: '电源不稳定',
+        desc: '机房电源输入电压波动，可能导致服务中断。需要切换至备用电源并调查根本原因。',
+        triggers: ['输入电压 > 240V 或 < 210V', '连续告警 3 次以上', '负载不均衡超过 20%'],
+        skill: '切换备用电源',
+        severity: 'high',
+        notifications: [
+          {
+            type: 'feishu',
+            title: '⚠️ 告警 - 电源不稳定',
+            body: '<span class="notification-badge">WARNING</span><br>机房 B 主电源电压波动异常，已自动切换至备用电源。系统运行正常，请在 2 小时内检查电源。',
+            actions: ['了解', '忽略']
+          }
+        ]
+      },
+      fire: {
+        name: '火灾预警',
+        desc: '烟雾/温度传感器触发预警，需要立即启动灭火系统并疏散人员。',
+        triggers: ['烟雾浓度 > 1.5 ppm', '温度上升速率 > 5°C/min', '烟火探测器连续触发'],
+        skill: '启动自动灭火系统',
+        severity: 'critical',
+        notifications: [
+          {
+            type: 'feishu',
+            title: '🔴 紧急 - 火灾预警',
+            body: '<span class="notification-badge critical">EMERGENCY</span><br>检测到烟雾异常，自动灭火系统已启动。所有人员请立即撤离机房，等待消防部门指示。',
+            actions: ['已撤离', '需援助']
+          },
+          {
+            type: 'openclaw',
+            title: '🚨 消防应急工单',
+            body: '<span class="notification-badge critical">紧急</span><br>已通知消防队，ETA 8 分钟。请确保机房出口畅通。',
+            actions: ['已通知', '取消']
+          }
+        ]
+      },
+      network: {
+        name: '网络中断',
+        desc: '核心网络设备宕机或连接中断，影响服务可用性。',
+        triggers: ['核心交换机 ping 失败 3 次', 'BGP 路由表异常变化', '带宽利用率 > 95%'],
+        skill: '切换备用网络路由',
+        severity: 'high',
+        notifications: [
+          {
+            type: 'feishu',
+            title: '🌐 告警 - 网络中断',
+            body: '<span class="notification-badge">WARNING</span><br>核心交换机异常，已自动切换至备用路由。服务已恢复，预计数据丢失 < 100 条记录。',
+            actions: ['查看', '反馈']
+          }
+        ]
+      }
+    };
+
+    function selectScenario() {
+      const select = document.getElementById('scenarioSelect');
+      const scenario = scenarios[select.value];
+      
+      document.getElementById('scenarioDesc').innerHTML = 
+        `<strong>${scenario.name}:</strong><br>${scenario.desc}`;
+      
+      document.getElementById('triggerConditions').innerHTML = 
+        scenario.triggers.map(t => `<div>• ${t}</div>`).join('');
+      
+      resetFlow();
+    }
+
+    function triggerScenario() {
+      const select = document.getElementById('scenarioSelect');
+      const scenario = scenarios[select.value];
+      
+      document.getElementById('scenarioStatus').textContent = '执行中...';
+      document.getElementById('notificationStack').innerHTML = '';
+
+      let stage = 1;
+      const totalStages = 4;
+
+      const interval = setInterval(() => {
+        // 激活当前阶段
+        for (let i = 1; i <= 4; i++) {
+          const stageEl = document.getElementById(`stage-${i}`);
+          const connectorEl = document.getElementById(`connector-${i}`);
+          
+          if (i < stage) {
+            stageEl.classList.remove('active');
+            if (connectorEl) connectorEl.classList.remove('active');
+          } else if (i === stage) {
+            stageEl.classList.add('active');
+            if (connectorEl) connectorEl.classList.add('active');
+          }
+        }
+
+        // 更新进度
+        const progress = Math.round((stage / totalStages) * 100);
+        document.getElementById('executionProgress').textContent = progress + '%';
+
+        if (stage === 3) {
+          document.getElementById('skillStatus').textContent = '✓ ' + scenario.skill;
+          document.getElementById('skillStatus').style.color = 'var(--accent-green)';
+        }
+
+        if (stage === 4) {
+          // 推送通知
+          pushNotifications(scenario.notifications);
+          document.getElementById('scenarioStatus').textContent = '已完成';
+          document.getElementById('scenarioStatus').style.color = 'var(--accent-green)';
+        }
+
+        stage++;
+        if (stage > totalStages) {
+          clearInterval(interval);
+        }
+      }, 1200);
+    }
+
+    function pushNotifications(notifications) {
+      const stack = document.getElementById('notificationStack');
+      stack.innerHTML = '';
+
+      notifications.forEach((notif, index) => {
+        setTimeout(() => {
+          const card = document.createElement('div');
+          card.className = `notification-card ${notif.type}`;
+          card.style.top = (index * 120) + 'px';
+          
+          const actions = notif.actions
+            .map(action => `<button class="btn btn-secondary" style="flex: 1; padding: 6px; font-size: 11px;">${action}</button>`)
+            .join('');
+
+          card.innerHTML = `
+            <div class="notification-header">
+              <span class="icon">${notif.type === 'feishu' ? '🐟' : '⚙️'}</span>
+              <span>${notif.title}</span>
+            </div>
+            <div class="notification-body">${notif.body}</div>
+            <div class="notification-actions">${actions}</div>
+          `;
+
+          stack.appendChild(card);
+
+          const countEl = document.getElementById('notificationCount');
+          countEl.textContent = parseInt(countEl.textContent) + 1;
+        }, index * 800);
+      });
+    }
+
+    function resetFlow() {
+      for (let i = 1; i <= 4; i++) {
+        const stageEl = document.getElementById(`stage-${i}`);
+        const connectorEl = document.getElementById(`connector-${i}`);
+        stageEl.classList.remove('active');
+        if (connectorEl) connectorEl.classList.remove('active');
+      }
+      
+      document.getElementById('scenarioStatus').textContent = '就绪';
+      document.getElementById('scenarioStatus').style.color = 'var(--accent-cyan)';
+      document.getElementById('executionProgress').textContent = '0%';
+      document.getElementById('skillStatus').textContent = '等待中';
+      document.getElementById('skillStatus').style.color = 'var(--accent-cyan)';
+      document.getElementById('notificationCount').textContent = '0';
+      document.getElementById('notificationStack').innerHTML = '<div style="text-align: center; color: #64748b; padding: 40px 20px; font-size: 13px;">👀 触发告警后，通知卡片将显示在此</div>';
+    }
+
+    window.addEventListener('load', () => {
+      selectScenario();
+    });
+  </script>
+</body>
+</html>
