@@ -525,6 +525,36 @@ async def hermes_diff(skill_id: str, version: Optional[str] = None):
     return {"skill": skill_id, "diffs": diffs}
 
 
+# ============== 飞书 Webhook 代理（避免浏览器 CORS） ==============
+class FeishuWebhookRequest(BaseModel):
+    payload: Dict[str, Any]  # 飞书 interactive 卡片内容
+
+
+@app.post("/webhook/feishu", tags=["Webhook"])
+async def webhook_feishu(request: FeishuWebhookRequest):
+    """服务端代发飞书 webhook · 避开浏览器 CORS"""
+    url = "https://open.feishu.cn/open-apis/bot/v2/hook/65c9659c-196e-4ab1-875c-d9b4b63a3bfc"
+    try:
+        with httpx.Client(timeout=15.0) as client:
+            r = client.post(url, json=request.payload)
+        ok = r.status_code == 200
+        return {
+            "ok": ok,
+            "status": r.status_code,
+            "feishu_resp": r.text[:500] if ok else r.text[:200],
+            "url": url,
+            "ts": datetime.now().isoformat(timespec="seconds"),
+        }
+    except Exception as e:
+        return {
+            "ok": False,
+            "status": "exception",
+            "err": str(e)[:200],
+            "url": url,
+            "ts": datetime.now().isoformat(timespec="seconds"),
+        }
+
+
 @app.get("/health", tags=["Health"])
 async def health_check():
     return {

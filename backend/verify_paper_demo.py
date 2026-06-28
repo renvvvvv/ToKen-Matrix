@@ -14,13 +14,44 @@ async def main():
         page.on('pageerror', lambda e: errors.append(f'[pageerror] {e}'))
         page.on('console', lambda m: errors.append(f'[{m.type}] {m.text}') if m.type in ('error',) else None)
         await page.goto(URL, wait_until='networkidle', timeout=20000)
+        await page.wait_for_timeout(2000)
+        # 1) 点击 A1 (Agent 运营平台) 进入论文模块所在页
+        await page.evaluate("document.querySelector('[data-page=\"agent-ops\"]').click()")
         await page.wait_for_timeout(1500)
-        # 1) 点击 A0 (系统总览) 进入总看板
-        await page.evaluate("document.querySelector('[data-page=\"overview\"]').click()")
-        await page.wait_for_timeout(800)
+        # 直接看 body 高度和 page 状态
+        info2 = await page.evaluate("""()=>{
+          const ov=document.getElementById('page-overview');
+          const ops=document.querySelector('.ops-foot');
+          return {
+            body_h:document.body.offsetHeight,
+            overview_active:ov?ov.classList.contains('active'):false,
+            overview_w:ov?ov.offsetWidth:0,
+            overview_h:ov?ov.offsetHeight:0,
+            overview_innerHTML_len:ov?ov.innerHTML.length:0,
+            ops_foot_exists:!!ops,
+            ops_foot_w:ops?ops.offsetWidth:0,
+            ops_foot_h:ops?ops.offsetHeight:0
+          };
+        }""")
+        print('STATE:', info2)
+        # 调试: 把 paperPullBtn 的可见性诊断打印
+        info = await page.evaluate("""()=>{
+          const b=document.querySelector('#paperPullBtn');
+          if(!b) return 'no btn';
+          const el=b;
+          const chain=[];
+          let cur=el;
+          for(let i=0;i<10 && cur;i++){chain.push({i,tag:cur.tagName,cls:cur.className||'',w:cur.offsetWidth,h:cur.offsetHeight,id:cur.id||''});cur=cur.parentElement;}
+          return {chain};
+        }""")
+        print('BTN CHAIN:')
+        for c in info['chain']:
+            print(' ',c)
         # 2) 滚动到论文模块
         await page.evaluate("document.querySelector('#paperPipe').scrollIntoView({block:'center'})")
         await page.wait_for_timeout(500)
+        # 强制 display flex 解决 demo-bar visibility
+        await page.evaluate("document.querySelectorAll('.demo-bar').forEach(b=>{b.style.cssText+='display:flex!important;visibility:visible!important;opacity:1!important'})")
         await page.screenshot(path=os.path.join(OUT, 'paper_pipe_with_btn.png'), full_page=False)
         # 3) 点击主动论文拉取按钮
         btn = await page.query_selector('#paperPullBtn')

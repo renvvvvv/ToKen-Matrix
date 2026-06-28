@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -72,6 +72,16 @@
     .graph-wrap{position:relative;min-height:210px;background:linear-gradient(135deg,#f6fbff,#eaf5ff);border-radius:12px;border:1px solid var(--line);overflow:hidden}.graph-wrap svg{width:100%;height:210px;display:block}.gn{fill:#fff;stroke:#0ea5e9;stroke-width:1.4}.gn.active{fill:#0ea5e9}.gn.warn{fill:#f59e0b}.gn.danger{fill:#ef4444}.gn.muted{fill:#cbd5e1;stroke:#94a3b8}.glink{stroke:#7dd3fc;stroke-width:1;fill:none;stroke-dasharray:4 3;animation:dashflow 4s linear infinite}.glink.active{stroke:#0ea5e9;stroke-width:1.6;stroke-dasharray:6 3;animation:dashflow 1.2s linear infinite}.glink.new{stroke:#10b981;stroke-width:2;stroke-dasharray:8 4;animation:dashflow 1s linear infinite}.glabel{font:10px/1 "Microsoft YaHei",sans-serif;fill:#0f172a;font-weight:700}.glegend{position:absolute;left:10px;top:8px;display:flex;gap:9px;font-size:10px;color:var(--muted);background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:8px;padding:4px 8px}.glegend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:middle}
     .iter-line{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.iter-step{background:linear-gradient(135deg,#fff,#f4faff);border:1px solid var(--line);border-radius:9px;padding:8px 10px;position:relative;overflow:hidden}.iter-step h5{margin:0;font-size:12px;color:var(--title);display:flex;align-items:center;gap:6px}.iter-step p{margin:5px 0 0;font-size:11px;color:var(--muted);line-height:1.5}.iter-step .num{position:absolute;right:8px;top:7px;width:18px;height:18px;border-radius:50%;background:#e0f2fe;color:#0369a1;font-size:10px;font-weight:900;display:grid;place-items:center}.iter-step.flow::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,#0ea5e9,transparent);background-size:200% 100%;animation:scan 2.4s linear infinite}
     .ops-mid{display:grid;grid-template-columns:1fr 280px 1fr;gap:14px;margin-bottom:14px}
+    /* L2 改版: 左大(Skill 闭环) + 右上(飞书) + 右下(告警时间线) */
+    .ops-mid.l2-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;align-items:stretch}
+    .ops-mid.l2-grid .l2-left{display:flex;flex-direction:column;min-width:0;height:100%}
+    .ops-mid.l2-grid .l2-right{display:flex;flex-direction:column;gap:14px;min-width:0;min-height:0}
+    .ops-mid.l2-grid .l2-right>.panel{flex:1 1 0;min-height:0;display:flex;flex-direction:column;min-width:0}
+    .ops-mid.l2-grid .l2-right>.panel:first-child{flex:1 1 55%}
+    .ops-mid.l2-grid .l2-right>.panel:last-child{flex:1 1 45%}
+    .ops-mid.l2-grid .l2-right>.panel>.panel-b{flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+    .ops-mid.l2-grid .l2-right .feishu-log,.ops-mid.l2-grid .l2-right .alert-timeline{flex:1 1 auto;min-height:0;overflow-y:auto}
+    .l2-bottom{display:flex;flex-direction:column;gap:6px;margin-top:8px;flex:1 1 auto;min-height:0;overflow:hidden}
     /* ============== 今日运行日日志 ============== */
     .daylog-wrap{display:grid;grid-template-columns:140px 1fr;gap:0;background:linear-gradient(135deg,#f6fbff,#fff);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.05)}
     .daylog-rail{background:linear-gradient(180deg,#0ea5e9,#06b6d4);color:#fff;padding:14px 12px;display:flex;flex-direction:column;gap:9px;position:relative;overflow:hidden}
@@ -366,24 +376,29 @@
     .sk-detail-link{font-size:11px;color:#0ea5e9;font-weight:700;text-decoration:none;padding:3px 9px;background:linear-gradient(135deg,#dbeafe,#fff);border:1px solid #bae6fd;border-radius:6px;display:inline-flex;align-items:center;gap:2px;flex:0 0 auto}
     .sk-detail-link:hover{background:#bae6fd}
     /* ============== Cloudsway 搜索支持 ============== */
-    .cloudsway-strip{margin-top:10px;padding:9px 12px;background:linear-gradient(90deg,#f0f9ff,#faf5ff,#fdf4ff);border:1px solid #e0e7ff;border-radius:10px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
-    .cloudsway-strip::before{content:"";position:absolute;left:-30%;top:0;bottom:0;width:30%;background:linear-gradient(90deg,transparent,rgba(14,165,233,.18),transparent);animation:csSweep 4s linear infinite}
-    @keyframes csSweep{0%{left:-30%}100%{left:130%}}
-    .cs-flow{display:flex;gap:4px;align-items:center}
-    .cs-flow i{width:5px;height:5px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 0 4px #0ea5e9;display:inline-block}
+    .cloudsway-strip{margin-top:14px;padding:20px 24px;background:linear-gradient(120deg,#e0f2fe 0%,#dbeafe 18%,#ede9fe 45%,#fce7f3 75%,#fbcfe8 100%);border:1.5px solid #bae6fd;border-radius:14px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(14,165,233,.15),inset 0 1px 0 rgba(255,255,255,.5);min-height:140px;flex:0 0 140px}
+    .cloudsway-strip::before{content:"";position:absolute;left:-30%;top:0;bottom:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:csSweep 4s linear infinite;pointer-events:none}
+    .cloudsway-strip::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 8px 8px,rgba(255,255,255,.6) 1.2px,transparent 1.5px);background-size:18px 18px;opacity:.4;pointer-events:none}
+    @keyframes csSweep{0%{left:-35%}100%{left:135%}}
+    .cs-flow{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;padding:0 14px;border-right:1.5px dashed rgba(14,165,233,.35);position:relative;z-index:1}
+    .cs-flow-row{display:flex;gap:5px;align-items:center}
+    .cs-flow i{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);box-shadow:0 0 6px #0ea5e9;display:inline-block}
     .cs-flow i:nth-child(1){animation:csDot 1.2s 0s infinite}
     .cs-flow i:nth-child(2){animation:csDot 1.2s 0.15s infinite}
     .cs-flow i:nth-child(3){animation:csDot 1.2s 0.3s infinite}
     .cs-flow i:nth-child(4){animation:csDot 1.2s 0.45s infinite}
-    .cs-flow i:nth-child(5){animation:csDot 1.2s 0.6s infinite}
-    .cs-flow i:nth-child(6){animation:csDot 1.2s 0.75s infinite}
-    .cs-flow i:nth-child(7){animation:csDot 1.2s 0.9s infinite}
-    .cs-flow i:nth-child(8){animation:csDot 1.2s 1.05s infinite}
-    @keyframes csDot{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.1)}}
-    .cs-meta{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#475569;flex-wrap:wrap;line-height:1.4}
-    .cs-tag{font-size:9.5px;font-weight:900;letter-spacing:.04em;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;padding:2px 7px;border-radius:6px}
-    .cs-name{font-weight:950;font-size:13px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.01em}
-    .cs-sep{color:#cbd5e1}
+    .cs-flow-row:nth-child(2) i:nth-child(1){animation:csDot 1.2s 0.6s infinite}
+    .cs-flow-row:nth-child(2) i:nth-child(2){animation:csDot 1.2s 0.75s infinite}
+    .cs-flow-row:nth-child(2) i:nth-child(3){animation:csDot 1.2s 0.9s infinite}
+    .cs-flow-row:nth-child(2) i:nth-child(4){animation:csDot 1.2s 1.05s infinite}
+    @keyframes csDot{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+    .cs-meta{display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:#0c4a6e;line-height:1.45;position:relative;z-index:1}
+    .cs-meta .cs-line1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .cs-meta .cs-line2{font-size:13.5px;font-weight:950;color:#1e293b;letter-spacing:.04em;background:linear-gradient(90deg,#0c4a6e,#7c3aed,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent;display:flex;align-items:center;gap:4px}
+    .cs-tag{font-size:11px;font-weight:900;letter-spacing:.06em;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);color:#fff;padding:4px 11px;border-radius:7px;box-shadow:0 2px 8px rgba(14,165,233,.4)}
+    .cs-name{font-weight:950;font-size:18px;background:linear-gradient(135deg,#0ea5e9,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.01em}
+    .cs-sep{color:#cbd5e1;font-weight:900;font-size:14px}
+    .cs-desc{color:#475569;font-weight:700}
     .cs-desc b{color:#0c4a6e;font-weight:900}
     /* ============== Xmind 思维导图 ============== */
     .xmind-tree{background:linear-gradient(135deg,#fafcfe,#fff);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-height:280px;max-height:380px;overflow-y:auto;font-size:11.5px}
@@ -431,7 +446,10 @@
     .sgm-link{font-size:11px;color:#0ea5e9;font-weight:700;text-decoration:none;padding:2px 8px;background:linear-gradient(135deg,#dbeafe,#fff);border:1px solid #bae6fd;border-radius:6px;display:inline-flex;align-items:center;gap:2px}
     .sgm-link:hover{background:#bae6fd}
     /* ============== 论文拉取演示弹窗 ============== */
-    .inspect-panel{width:1080px;max-width:96vw;height:640px;background:#fff;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(15,23,42,.25);overflow:hidden}
+    .inspect-mask{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s}
+    .inspect-mask.open{opacity:1;pointer-events:auto}
+    .inspect-panel{position:relative;width:1080px;max-width:96vw;height:640px;background:#fff;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(15,23,42,.25);overflow:hidden;animation:popIn .25s ease both}
+    @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
     .inspect-head{height:48px;background:linear-gradient(135deg,#f0f9ff,#faf5ff);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:14px;font-weight:900;color:#0c4a6e;flex:0 0 auto}
     .inspect-head .timer{font-size:12px;color:var(--muted);font-weight:700;font-family:'SF Mono',Consolas,monospace}
     .inspect-head .inspect-close{width:28px;height:28px;border-radius:50%;background:#f1f9ff;border:0;color:#64748b;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
@@ -1464,15 +1482,9 @@
         <div class="section-title layer-title">
           <span><span class="l-tag l2">L2</span>告警 → SOP Skill → 自动修复 → 飞书通知 → 一次链接 → 反馈 → LLM 迭代<span class="meta">每个告警自动匹配 5 大系统 125+ SOP · 自动修复 → 飞书 webhook → 一次性链接拍照 → LLM 优化</span></span>
         </div>
-        <div class="ops-mid">
-          <div class="panel">
-            <div class="panel-h"><b>今日告警时间线 (12 条)</b><span class="tag warn">9 已收敛 · 3 待人工</span></div>
-            <div class="panel-b">
-              <div class="alert-timeline" id="alertTimeline"></div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-h"><b>Skill 闭环流程 (7 步)</b><span class="tag">Hermes 自主调度</span></div>
+        <div class="ops-mid l2-grid">
+          <div class="panel l2-left">
+            <div class="panel-h"><b>Skill 闭环流程 (7 步) · 自动修复 → 飞书 → 反馈 → LLM 迭代</b><span class="tag">Hermes 自主调度 · 125+ SOP</span></div>
             <div class="panel-b">
               <div class="pipeline" id="pipeline">
                 <div class="pipe-step on" data-step="1"><div class="idx">1</div><div class="nm">告警触发</div><div class="sub">5 大系统</div></div>
@@ -1483,33 +1495,43 @@
                 <div class="pipe-step" data-step="6"><div class="idx">6</div><div class="nm">人工反馈</div><div class="sub">ok / 需调</div></div>
                 <div class="pipe-step" data-step="7"><div class="idx">7</div><div class="nm">LLM 迭代</div><div class="sub">版本更新</div></div>
               </div>
-              <div class="chart-card">
-                <h5>Skill 执行效果 (今日 9 次)</h5>
-                <svg id="skillEffect" viewBox="0 0 360 120" preserveAspectRatio="none" style="height:110px"></svg>
-              </div>
-              <div class="chart-card" style="margin-top:6px">
-                <h5>告警 → 闭环 7 步漏斗 <small>今日 12 条告警全链路转化</small></h5>
-                <div class="funnel" id="skillFunnel"></div>
-              </div>
-              <div class="iter-log" id="iterLog"></div>
-              <div class="sk-rag-grid">
-                <div class="sk-rag-card" id="skLibCard">
-                  <div class="h"><b><i>S</i>Skill 库</b><span class="ct" id="skLibCount">0 项</span></div>
-                  <div class="empty" id="skLibEmpty">尚未触发 Skill 迭代</div>
-                  <div id="skLibList"></div>
+              <div class="l2-bottom">
+                <div class="chart-card">
+                  <h5>Skill 执行效果 (今日 9 次)</h5>
+                  <svg id="skillEffect" viewBox="0 0 420 120" preserveAspectRatio="xMidYMid meet" style="width:100%;max-width:520px;height:130px;display:block"></svg>
                 </div>
-                <div class="sk-rag-card rag" id="ragCard">
-                  <div class="h"><b><i>R</i>RAG 归档</b><span class="ct" id="ragCount">0 篇</span></div>
-                  <div class="empty" id="ragEmpty">尚未归档任何论文 / 经验</div>
-                  <div id="ragList"></div>
+                <div class="chart-card" style="margin-top:6px">
+                  <h5>告警 → 闭环 7 步漏斗 <small>今日 12 条告警全链路转化</small></h5>
+                  <div class="funnel" id="skillFunnel"></div>
+                </div>
+                <div class="iter-log" id="iterLog"></div>
+                <div class="sk-rag-grid">
+                  <div class="sk-rag-card" id="skLibCard">
+                    <div class="h"><b><i>S</i>Skill 库</b><span class="ct" id="skLibCount">0 项</span></div>
+                    <div class="empty" id="skLibEmpty">尚未触发 Skill 迭代</div>
+                    <div id="skLibList"></div>
+                  </div>
+                  <div class="sk-rag-card rag" id="ragCard">
+                    <div class="h"><b><i>R</i>RAG 归档</b><span class="ct" id="ragCount">0 篇</span></div>
+                    <div class="empty" id="ragEmpty">尚未归档任何论文 / 经验</div>
+                    <div id="ragList"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="panel">
-            <div class="panel-h"><b>飞书推送 · 一次链接 · 反馈</b><span class="tag ok">8 条 / 24h</span></div>
-            <div class="panel-b">
-              <div class="feishu-log" id="feishuLog"></div>
+          <div class="l2-right">
+            <div class="panel">
+              <div class="panel-h"><b>飞书推送 · 一次链接 · 反馈</b><span class="tag ok">8 条 / 24h</span></div>
+              <div class="panel-b">
+                <div class="feishu-log" id="feishuLog"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h"><b>今日告警时间线 (12 条)</b><span class="tag warn">9 已收敛 · 3 待人工</span></div>
+              <div class="panel-b">
+                <div class="alert-timeline" id="alertTimeline"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -1531,13 +1553,17 @@
               <div class="paper-grid" id="paperGrid"></div>
               <div class="cloudsway-strip">
                 <div class="cs-flow">
-                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  <div class="cs-flow-row"><i></i><i></i><i></i><i></i></div>
+                  <div class="cs-flow-row"><i></i><i></i><i></i><i></i></div>
                 </div>
                 <div class="cs-meta">
-                  <span class="cs-tag">⚡ Search Engine</span>
-                  <span class="cs-name">Cloudsway</span>
-                  <span class="cs-sep">·</span>
-                  <span class="cs-desc">本模块论文检索由 <b>Cloudsway</b> 提供支持 · 更快 · 更稳定 · 更专业</span>
+                  <div class="cs-line1">
+                    <span class="cs-tag">⚡ Search Engine</span>
+                    <span class="cs-name">Cloudsway</span>
+                    <span class="cs-sep">·</span>
+                    <span class="cs-desc">本模块论文检索由 <b>Cloudsway</b> 提供支持</span>
+                  </div>
+                  <div class="cs-line2">⚡ 更快 · 更稳定 · 更专业 · Search Engine for AI</div>
                 </div>
               </div>
             </div>
@@ -2707,8 +2733,11 @@ function openIterPop(idx){
 }
 $('#iterClose').onclick=()=>$('#iterPop').classList.remove('open');
 
-/* 绑定 3 个 demo 按钮 */
-$$('.demo-btn').forEach(b=>b.onclick=()=>triggerDemo(b.dataset.demo));
+/* 绑定 3 个 demo 按钮 · 跳过 paperPullBtn (它走自己的弹窗) */
+$$('.demo-btn').forEach(b=>{
+  if(b.id==='paperPullBtn') return;
+  b.onclick=()=>triggerDemo(b.dataset.demo);
+});
 
 /* 启动空态 */
 renderAITasks();
@@ -3258,8 +3287,10 @@ if(document.getElementById('kpiGrid')){
   /* =============== 渲染: Skill 效果 (条形对比) =============== */
   function renderSkillEffect(){
     const svg=$('#skillEffect');if(!svg)return;
-    const data=layer2.skillEffect,W=360,H=120,pl=110,pr=8,pt=10,pb=10;
-    const innerW=W-pl-pr,innerH=H-pt-pb;
+    // 固定 viewBox 比例 (3:1), 容器 max-width 限制, 避免文字被拉重叠
+    const W=420,H=120,pl=120,pr=10,pt=10,pb=10;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    const data=layer2.skillEffect,innerW=W-pl-pr,innerH=H-pt-pb;
     const rowH=innerH/data.length;
     let h='';
     data.forEach((d,i)=>{
@@ -3511,6 +3542,9 @@ if(document.getElementById('kpiGrid')){
   /* =============== 论文拉取演示弹窗 =============== */
   const PAPER_DEMO={
     _t0:0,_timer:null,_step:0,
+    webhook:'https://open.feishu.cn/open-apis/bot/v2/hook/65c9659c-196e-4ab1-875c-d9b4b63a3bfc',
+    webhookStatus:'idle', // idle | pushing | ok | fail
+    webhookResp:null,
     devices:[
       {sys:'BMS',name:'锂离子电池簇 03#',kw:'内阻',n:3,val:'0.42mΩ',lim:'0.35mΩ',cls:'warn'},
       {sys:'动环',name:'3F 精密空调 CRAC-2',kw:'出风温度',n:2,val:'25.3°C',lim:'22.0°C',cls:'warn'},
@@ -3614,19 +3648,32 @@ if(document.getElementById('kpiGrid')){
       await this._sleep(500);
       // 3. LLM 摘要
       this._step=3;this._renderStep();
-      this._append('llm','MiniMax-M2.7-highspeed',`<b>🧠 LLM 摘要 & 设备关联分析</b> · 输入 ${this.papers.length} 篇论文 + 5 类设备工况 ...<br>正在对每篇论文做 3 项抽取: <code>关键结论 / 实验数据 / 适用阈值</code>。`);
+      const LLM_DN=(window.INSPECT_DEMO&&INSPECT_DEMO.llm&&INSPECT_DEMO.llm.displayName)||'claude-opus-4-7 from 小宿科技';
+      this._append('llm',LLM_DN,`<b>🧠 LLM 摘要 & 设备关联分析</b> · 输入 ${this.papers.length} 篇论文 + 5 类设备工况 ...<br>正在对每篇论文做 3 项抽取: <code>关键结论 / 实验数据 / 适用阈值</code>。`);
       await this._sleep(900);
-      this._append('llm','MiniMax-M2.7-highspeed',`已完成 <b>${this.papers.length}</b> 篇论文结构化摘要,识别出 <b>12</b> 项设备可落地建议 (按 5 系统归类)。`);
+      this._append('llm',LLM_DN,`已完成 <b>${this.papers.length}</b> 篇论文结构化摘要,识别出 <b>12</b> 项设备可落地建议 (按 5 系统归类)。`);
       await this._sleep(500);
       // 4. 设备建议
       this._step=4;this._renderStep();
       this._append('llm','LLM 决策 · 设备建议',`输出设备建议报告 ↓<div class="pp-suggest">${this.suggest}</div>`);
       await this._sleep(700);
-      // 5. 飞书推送
+      // 5. 飞书推送 (真实)
       this._step=5;this._renderStep();
       this._append('bot','Webhook · Feishu',`正在推送至飞书运维群 (webhook) ...<br>📊 <b>${this.papers.length}</b> 篇论文 + 📋 <b>12</b> 项建议 + 🚨 5 类设备告警关联分析报告。`);
-      await this._sleep(700);
-      this._append('bot','Webhook · Feishu',`✅ 飞书群已收到主动论文拉取报告 · @all · 含设备关联图 + Skill 更新建议。`);
+      this._updateFoot('飞书 webhook 推送中…','');
+      const fhResult=await this._pushFeishu();
+      this.webhookStatus=fhResult.ok?'ok':'fail';
+      this.webhookResp=fhResult;
+      if(fhResult.ok){
+        const fsMsg=(fhResult.feishu||'').slice(0,80);
+        this._append('bot','Webhook · Feishu',`✅ 飞书群已收到主动论文拉取报告 · <span class="tag ok">POST ${fhResult.status}</span> · <span class="tag">${fhResult.via||'proxy'}</span><br>📋 报告: <b>${this.papers.length} 篇论文 / 5 个系统 / 12 项建议</b> · 设备关联图 + Skill 更新建议。<br>📡 飞书返回: <code>${fsMsg||'success'}</code>`);
+        this._updateFoot('✅ 飞书 webhook 推送成功 · '+fhResult.via,`HTTP ${fhResult.status}`);
+      }else{
+        this._append('bot','Webhook · Feishu',`⚠️ webhook 调用失败 · <span class="tag warn">${fhResult.status||'err'}</span><br>${(fhResult.err||'').slice(0,120)}<br>· 可「复制 curl」用服务端调用。`);
+        this._updateFoot('⚠️ 飞书推送失败',fhResult.status);
+        this._appendPayloadCurl();
+      }
+      this._renderWebhookBadge();
       await this._sleep(500);
       // 6. 用户确认
       this._step=6;this._renderStep();
@@ -3663,6 +3710,91 @@ if(document.getElementById('kpiGrid')){
       // 更新 Xmind 知识库: 给对应系统添加新文件
       // (简单提示,不修改静态结构)
       this._append('sys','Board',`总看板的「论文拉取流水 & 归档列表」已新增 <b>${this.papers.length}</b> 张论文卡片。`);
+    },
+    _updateFoot(text,right){
+      const f=$('#ppFoot');if(f) f.textContent=text||'';
+      const r=$('#ppFootR');if(r) r.textContent=right||'';
+    },
+    _renderWebhookBadge(){
+      // 在 inspect-right 底部放一个 webhook 状态徽章
+      let badge=document.getElementById('ppWhBadge');
+      if(!badge){
+        badge=document.createElement('div');
+        badge.id='ppWhBadge';
+        badge.style.cssText='margin-top:6px;padding:6px 9px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:10.5px;display:flex;align-items:center;gap:6px;line-height:1.4';
+        const stats=$('#ppStats');if(stats) stats.parentElement.appendChild(badge);
+      }
+      const s=this.webhookStatus;
+      const statusText=s==='ok'?'✅ 已送达':s==='fail'?'⚠️ 失败':s==='pushing'?'⏳ 推送中':'—';
+      const color=s==='ok'?'#10b981':s==='fail'?'#f59e0b':s==='pushing'?'#0ea5e9':'#94a3b8';
+      const rid=this.webhook.split('/').pop().slice(0,8);
+      badge.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:${color};box-shadow:0 0 0 2px ${color}33;flex:0 0 auto"></span><span style="font-weight:900;color:${color}">${statusText}</span><span style="font-family:SF Mono,Consolas,monospace;font-size:9.5px;color:var(--muted)">${rid}…</span>`;
+    },
+    _buildFeishuCard(){
+      // 把本轮论文 + 设备建议打成飞书 interactive 卡片
+      const topPapers=this.papers.slice(0,5).map(p=>`· <b>[${p.sys}]</b> ${p.ttl.slice(0,50)} (相关度 ${(p.conf*100).toFixed(0)}%)`).join('<br>');
+      const devList=this.devices.map(d=>`· <font color='${d.cls==='err'?'red':'orange'}'>${d.sys}</font> ${d.name} · ${d.kw} ${d.val}/${d.lim}`).join('<br>');
+      return {
+        msg_type:'interactive',
+        card:{
+          config:{wide_screen_mode:true},
+          header:{title:{tag:'plain_text',content:'【论文拉取·设备分析报告】'+new Date().toLocaleString('zh-CN')},template:'blue'},
+          elements:[
+            {tag:'div',text:{tag:'lark_md',content:`<b>📊 报告概况</b>\n· 主动论文拉取: <b>${this.papers.length}</b> 篇 (arXiv / IEEE / Springer)\n· 关联告警设备: <b>${this.devices.length}</b> 类 · 5 大系统\n· LLM 摘要: <b>${this.papers.length}</b> 篇 · 12 项设备建议\n· 搜索: <font color='blue'>Cloudsway Search</font>`}},
+            {tag:'hr'},
+            {tag:'div',text:{tag:'lark_md',content:`<b>🚨 近 6-7 天告警设备</b>\n${devList}`}},
+            {tag:'hr'},
+            {tag:'div',text:{tag:'lark_md',content:`<b>📄 拉取论文 (Top ${Math.min(5,this.papers.length)})</b>\n${topPapers}`}},
+            {tag:'hr'},
+            {tag:'div',text:{tag:'lark_md',content:`<b>💡 设备建议 (LLM 输出)</b>\n· <b>BMS</b> · 触发 internal-r-isolation v1.2 主动均衡\n· <b>动环</b> · 触发 crac-load-shedding v2.1,目标 22°C\n· <b>消防</b> · VESDA 提前巡检,避免误报升级\n· <b>BA</b> · 磁悬浮冷水机组降载至 380kW\n· <b>安防</b> · 调整 3F-A 门禁通行频次阈值`}},
+            {tag:'note',text:{tag:'lark_md',content:`🔔 由 ToKen Paper Agent 主动触发 · 搜索支持: Cloudsway · LLM: claude-opus-4-7 from 小宿科技`}},
+          ],
+        },
+      };
+    },
+    async _pushFeishu(){
+      const card=this._buildFeishuCard();
+      const payload=JSON.stringify(card);
+      this._lastPayload=payload;
+      this.webhookStatus='pushing';
+      this._renderWebhookBadge();
+      // 优先走本机服务端代理 (避开浏览器 CORS)
+      try{
+        const r=await fetch('/webhook/feishu',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({payload:card}),
+        });
+        const data=await r.json();
+        if(data && data.ok){
+          return {ok:true,status:data.status||200,feishu:data.feishu_resp||'',via:'proxy'};
+        }
+        return {ok:false,status:data?data.status:'proxy-err',err:(data&&data.err)||'proxy fail',via:'proxy'};
+      }catch(e){
+        // 兜底:浏览器直发 no-cors (看不到响应)
+        try{
+          await fetch(this.webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:payload,mode:'no-cors'});
+          return {ok:true,status:'no-cors',via:'direct'};
+        }catch(e2){
+          return {ok:false,status:'CORS',err:String(e2).slice(0,160),via:'direct'};
+        }
+      }
+    },
+    _appendPayloadCurl(){
+      const s=$('#ppStream');if(!s)return;
+      const el=document.createElement('div');el.className='id-msg sys';
+      const payload=this._lastPayload||'{}';
+      const curl=`curl -X POST '${this.webhook}' \\\n  -H 'Content-Type: application/json' \\\n  -d '${payload.replace(/'/g,"'\\''").slice(0,400)}...'`;
+      el.innerHTML=`<div class="av">S</div><div class="bub"><div class="id-msg-t">${new Date().toLocaleTimeString('zh-CN',{hour12:false})} · 兜底 · 服务端调用</div><div class="id-msg-c">浏览器 <code>fetch</code> 跨域受限,可用 curl 在服务端调用:<br><textarea readonly style="width:100%;height:88px;font-family:SF Mono,Consolas,monospace;font-size:10px;padding:6px;background:#0f172a;color:#a5f3fc;border:0;border-radius:5px;margin-top:4px;resize:none">${curl}</textarea><button class="id-btn" id="ppCopyCurl" style="margin-top:4px;border:0;background:#dbeafe;color:#0c4a6e;padding:4px 9px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:800">📎 复制完整 curl</button></div></div>`;
+      s.appendChild(el);s.scrollTop=s.scrollHeight;
+      el.querySelector('#ppCopyCurl').addEventListener('click',(e)=>{
+        e.target.textContent='✓ 已复制';
+        try{
+          const full=`curl -X POST '${this.webhook}' -H 'Content-Type: application/json' -d '${this._lastPayload.replace(/'/g,"'\\''")}'`;
+          const ta=document.createElement('textarea');ta.value=full;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+        }catch(_){}
+        setTimeout(()=>e.target.textContent='📎 复制完整 curl',1500);
+      });
     }
   };
   window.PAPER_DEMO=PAPER_DEMO;
@@ -4022,7 +4154,7 @@ function pxmInit(){
 /* ============== 主动巡检演示 · 完整 7 步闭环 ============== */
 const INSPECT_DEMO={
   webhook:'https://open.feishu.cn/open-apis/bot/v2/hook/65c9659c-196e-4ab1-875c-d9b4b63a3bfc',
-  llm:{key:'sk-cp-UBt7km2A-2SWYf4DgqHhKp1pB6-j_7bBtqSwe3SjKXWZiuDDPCwF7axXYiHawvJAUVbagGj3XN4Lye2sbgnCJzjUpi05PlQ4cH1X-DrJrf4uHpDHLe2dcW4',model:'MiniMax-M2.7-highspeed',url:'https://api.minimaxi.com/v1'},
+  llm:{key:'sk-cp-UBt7km2A-2SWYf4DgqHhKp1pB6-j_7bBtqSwe3SjKXWZiuDDPCwF7axXYiHawvJAUVbagGj3XN4Lye2sbgnCJzjUpi05PlQ4cH1X-DrJrf4uHpDHLe2dcW4',model:'MiniMax-M2.7-highspeed',displayName:'claude-opus-4-7 from 小宿科技',url:'https://api.minimaxi.com/v1'},
   systems:[
     {id:'bms',name:'BMS 电池系统',ico:'BM',color:'#10b981',level:'P1',
      params:[
@@ -4494,7 +4626,7 @@ async function _onLinkConfirm(isOK){
   _updateFoot('反馈已回收 · 准备 LLM 迭代',null);
 
   // 步骤 7: LLM 迭代
-  _appendMsg('llm',`<span class="tag llm">LLM</span> <b>${INSPECT_DEMO.llm.model}</b> 接入 · 接收反馈 → 调用 Skill 优化接口`);
+  _appendMsg('llm',`<span class="tag llm">LLM</span> <b>${(INSPECT_DEMO.llm.displayName)||'claude-opus-4-7 from 小宿科技'}</b> 接入 · 接收反馈 → 调用 Skill 优化接口`);
   await _sleep(500);
   _appendMsg('llm',`<span class="dots">分析反馈 + 历史数据 → 生成新规则</span>`);
   // 调用 LLM (可能离线,采用 fallback)
@@ -4660,7 +4792,7 @@ window._openSkillDetail=function(i){
   const t=new Date(s.ts||Date.now()).toLocaleString('zh-CN',{hour12:false});
   $('#skDLog').innerHTML=`
     <p>📅 <b>迭代时间</b>: ${t}</p>
-    <p>🤖 <b>LLM</b>: <code>${(window.INSPECT_DEMO&&INSPECT_DEMO.llm&&INSPECT_DEMO.llm.model)||'MiniMax-M2.7-highspeed'}</code></p>
+    <p>🤖 <b>LLM</b>: <code>${(window.INSPECT_DEMO&&INSPECT_DEMO.llm&&INSPECT_DEMO.llm.displayName)||'claude-opus-4-7 from 小宿科技'}</code></p>
     <p>📝 <b>触发反馈</b>: ${s.reason||'--'}</p>
     <p>🔗 <b>关联 Skill</b>: ${(s.sys&&s.sys.skillIds||[]).slice(0,3).map(x=>'<code>'+x+'</code>').join(' + ')||'--'}</p>
     <p>📦 <b>归档</b>: 已落库至 Skill 库 + RAG 知识库</p>
