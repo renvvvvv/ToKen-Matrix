@@ -24,6 +24,8 @@ RUN pip install --upgrade pip setuptools wheel && \
 
 # 复制应用代码
 COPY main.py .
+COPY console.html .            # 主控制台前端 (/console 路由读取)
+COPY confirm.html .            # 飞书一次性确认链接页 (/confirm 路由)
 COPY config/ ./config/
 
 # 创建 hermes scenarios 目录

@@ -568,6 +568,8 @@ async def health_check():
 
 @app.get("/console", response_class=HTMLResponse, tags=["Console"])
 @app.get("/console.html", response_class=HTMLResponse, tags=["Console"])
+@app.get("/api/console", response_class=HTMLResponse, tags=["Console"], include_in_schema=False)
+@app.get("/api/console.html", response_class=HTMLResponse, tags=["Console"], include_in_schema=False)
 async def console():
     console_path = Path(__file__).with_name("console.html")
     return HTMLResponse(content=console_path.read_text(encoding="utf-8"))
@@ -839,14 +841,8 @@ async def skills_upgrade(request: SkillUpgradeRequest):
 
 @app.get("/", tags=["Info"])
 async def root():
-    return {
-        "name": "Token 母体 API",
-        "version": "0.3.0",
-        "console": "/console",
-        "docs": "/docs",
-        "llm": LLM_CONFIG["model"],
-        "research_docs": "/research/docs",
-    }
+    # 直接返回控制台 HTML，避免用户访问根路径时只看到 JSON
+    return await console()
 
 
 if __name__ == "__main__":
