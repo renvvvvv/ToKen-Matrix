@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 260" width="540" height="260">
+  <!-- 世纪互联 -->
+  <g fill="#1F6EFF" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="120">
+    <text x="60" y="120">世</text>
+    <text x="170" y="120">纪</text>
+    <text x="280" y="120">互</text>
+    <text x="390" y="120">联</text>
+  </g>
+  <!-- 绿色圆点装饰（左上、右中） -->
+  <circle cx="36" cy="36" r="14" fill="#2DDC97"/>
+  <circle cx="478" cy="60" r="14" fill="#2DDC97"/>
+  <!-- VNET -->
+  <g fill="#1F6EFF" font-family="'Helvetica Neue','Arial Black',Arial,sans-serif" font-weight="900" font-size="130" letter-spacing="2">
+    <text x="120" y="240">V</text>
+    <text x="225" y="240">N</text>
+    <text x="345" y="240">E</text>
+    <text x="450" y="240">T</text>
+  </g>
+  <!-- VNET 中的绿色圆点 -->
+  <circle cx="305" cy="200" r="11" fill="#2DDC97"/>
+</svg>
