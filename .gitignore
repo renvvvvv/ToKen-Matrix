@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Server logs
+*.log
+*.err
+
+# Test outputs
+test_out.txt
+*.tmp
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Env
+.env
+.env.local
+config.local.js
+
+# Build
+dist/
+build/
+*.egg-info/
